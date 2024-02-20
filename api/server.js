@@ -7,7 +7,6 @@ const morgan = require("morgan");
 // Files
 const {db} = require("./src/db");
 const routes = require("./src/routes/index.js");
-const {requestLogger} = require("./src/middlewares/requestLogger");
 const {HOST, CLIENT_URL} = process.env;
 
 
@@ -25,7 +24,6 @@ server.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
   next();
 });
-server.use(requestLogger);
 
 // Routes
 server.use("/", routes);
