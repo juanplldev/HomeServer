@@ -6,7 +6,6 @@ const {User} = require("../db");
 const {hashPassword} = require("../services/bcrypt");
 const {getModelByParam} = require("../controllers/getDbMethods");
 const {postModel} = require("../controllers/postDbMethods");
-const {ADMIN_PASSWORD} = process.env;
 
 
 router.post("/register", async (req, res, next) => {

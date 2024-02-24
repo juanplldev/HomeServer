@@ -11,7 +11,6 @@ async function authenticateUser(content)
         {
             id: content.id,
             userName: content.userName,
-            isAdmin: content.isAdmin,
         },
         JWT_SECRET,
         "1000d",
