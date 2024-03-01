@@ -3,12 +3,12 @@ const {Router} = require("express");
 const router = Router();
 // Files
 const {getFile, postFile, putFile, deleteFile} = require("../controllers/fileMethods");
-const {isAuthenticated, isAuthorized} = require("../middlewares/localAuth");
+const {isAuthenticated} = require("../middlewares/localAuth");
 const {processPath} = require("../middlewares/processPath");
 
 
 // Get file
-router.get("/dir/:path*?", isAuthenticated, isAuthorized, processPath, async (req, res, next) => {
+router.get("/file/:path*?", isAuthenticated, processPath, async (req, res, next) => {
     try
     {
         const {path} = req.params;
@@ -30,7 +30,7 @@ router.get("/dir/:path*?", isAuthenticated, isAuthorized, processPath, async (re
 });
 
 // Post file
-router.post("/dir/:path*?", isAuthenticated, isAuthorized, processPath, async (req, res, next) => {
+router.post("/file/:path*?", isAuthenticated, processPath, async (req, res, next) => {
     try
     {
         const {path} = req.params;
@@ -54,21 +54,21 @@ router.post("/dir/:path*?", isAuthenticated, isAuthorized, processPath, async (r
 });
 
 // Put file
-router.put("/dir/:path*", isAuthenticated, isAuthorized, processPath, async (req, res, next) => {
+router.put("/file/:path*", isAuthenticated, processPath, async (req, res, next) => {
     try
     {
         const {path} = req.params;
         const {name} = req.body;
         
-        const newFile = await putFile(path, name);
+        const updatedFile = await putFile(path, name);
         
-        if(!newFile.Error)
+        if(!updatedFile.Error)
         {
-            res.status(200).send(newFile);
+            res.status(200).send(updatedFile);
         }
         else
         {
-            res.status(404).send(newFile.Error);
+            res.status(404).send(updatedFile.Error);
         };
     }
     catch(error)
@@ -78,7 +78,7 @@ router.put("/dir/:path*", isAuthenticated, isAuthorized, processPath, async (req
 });
 
 // Delete file
-router.delete("/dir/:path*", isAuthenticated, isAuthorized, processPath, async (req, res, next) => {
+router.delete("/file/:path*", isAuthenticated, processPath, async (req, res, next) => {
     try
     {
         const {path} = req.params;

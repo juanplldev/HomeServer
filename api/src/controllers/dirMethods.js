@@ -9,8 +9,7 @@ async function getDir(dirName)
     try
     {
         let foundError = false;
-        
-        const path = joinRootPath(dirName);
+        const {path, clientPath} = joinRootPath(dirName);
         const dir = await fs.promises.opendir(path).catch(e => {foundError = true; return});
         const dirContent =
         {
@@ -37,7 +36,7 @@ async function getDir(dirName)
             
             const dirInfo =
             {
-                path: path,
+                path: clientPath,
                 content: dirContent,
             };
             
@@ -74,7 +73,7 @@ async function postDir(dirPath, dirName)
         else
         {
             let foundError = null;
-            const path = joinRootPath(dirPath, dirName);
+            const {path} = joinRootPath(dirPath, dirName);
             
             await fs.promises.mkdir(path).catch(e => {foundError = true; return});
             
@@ -126,8 +125,8 @@ async function putDir(dirPath, dirName)
         {
             let foundError = null;
             const modPath = dirPath.substring(0, dirPath.lastIndexOf("/"));
-            const oldPath = joinRootPath(dirPath);
-            const newPath = joinRootPath(modPath, dirName);
+            const oldPath = joinRootPath(dirPath).path;
+            const newPath = joinRootPath(modPath, dirName).path;
             
             await fs.promises.rename(oldPath, newPath).catch(e => {foundError = true; return});
             
@@ -170,7 +169,7 @@ async function deleteDir(dirPath)
     try
     {
         let foundError = null;
-        const path = joinRootPath(dirPath);
+        const {path} = joinRootPath(dirPath);
         
         await fs.promises.rmdir(path, {recursive: true}).catch(e => {foundError = true; return});
         

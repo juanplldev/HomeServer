@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
+const {isAuthorized} = require("./src/middlewares/localAuth.js");
 // Files
 const {db} = require("./src/db");
 const routes = require("./src/routes/index.js");
@@ -13,7 +14,7 @@ const {PORT = 3000, CLIENT_URL} = process.env;
 const server = express();
 
 // Middlewares
-server.use(bodyParser.urlencoded({extended: true, limit: "50mb"}));
+server.use(bodyParser.urlencoded({extended: false}));
 server.use(bodyParser.json({limit: "50mb"}));
 server.use(morgan("dev"));
 server.use(fileUpload());
@@ -25,10 +26,9 @@ server.use(cors());
 //   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
 //   next();
 // });
-// server.use(logger);
 
 // Routes
-server.use("/", routes);
+server.use("/", isAuthorized, routes);
 
 // Server starter
 server.listen(PORT, () => {

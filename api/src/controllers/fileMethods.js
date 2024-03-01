@@ -1,5 +1,6 @@
 // Dependencies
 const fs = require("fs");
+const fsPath = require("path");
 // Files
 const {joinRootPath} = require("../rootPath");
 
@@ -8,7 +9,7 @@ async function getFile(filePath, res)
 {
     try
     {
-        const path = joinRootPath(filePath);
+        const {path} = joinRootPath(filePath);
         const name = filePath.substring(filePath.lastIndexOf("/"));
         
         if (fs.existsSync(path))
@@ -57,7 +58,7 @@ async function postFile(filePath, fileData)
         else
         {
             const {name, data, mimetype} = fileData;
-            const path = joinRootPath(filePath, name);
+            const {path} = joinRootPath(filePath, name);
             
             if(fs.existsSync(path))
             {
@@ -97,9 +98,17 @@ async function putFile(filePath, fileName)
         else
         {
             let foundError = null;
-            const modPath = filePath.substring(0, filePath.lastIndexOf("/"));
-            const oldPath = joinRootPath(filePath);
-            const newPath = joinRootPath(modPath, fileName);
+            let fileExt = fsPath.extname(fileName);
+            
+            const modPath = filePath.substring(0, filePath.lastIndexOf("/")) || "/";
+            const oldPath = joinRootPath(filePath).path;
+            
+            if(!fileExt)
+            {
+                fileExt = fsPath.extname(oldPath);
+            };
+            
+            const newPath = joinRootPath(modPath, fileName, fileExt).path;
             
             await fs.promises.rename(oldPath, newPath).catch(e => {foundError = true; return});
             
@@ -131,7 +140,7 @@ async function deleteFile(filePath)
     try
     {
         let foundError = null;
-        const path = joinRootPath(filePath);
+        const {path} = joinRootPath(filePath);
         
         await fs.promises.unlink(path, {recursive: true}).catch(e => {foundError = true; return});
         

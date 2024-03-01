@@ -11,15 +11,18 @@ if(!rootPath)
     process.exit(1);
 };
 
-function joinRootPath(dir, dirName="")
+function joinRootPath(dir, dirName="", fileExt="")
 {
     if(!dir)
     {
-        return rootPath;
+        return {path: rootPath};
     }
     else
     {
-        return path.join(rootPath, dir, dirName);
+        return {
+            path: path.join(rootPath, dir, path.basename(dirName, path.extname(dirName))) + fileExt,
+            clientPath: path.join(dir, path.basename(dirName, path.extname(dirName))) + fileExt,
+        };
     };
 };
 
