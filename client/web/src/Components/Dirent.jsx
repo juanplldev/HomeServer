@@ -119,7 +119,7 @@ function DirentCard(props)
                 let error = null;
                 
                 const dirPath = path ? `${path}/${name}` : name;
-                const data = await dispatch(putDir(dirPath, input.name)).catch(e => {
+                await dispatch(putDir(dirPath, input.name)).catch(e => {
                     error = true;
                     console.log(e);
                 });
@@ -133,7 +133,7 @@ function DirentCard(props)
                 let error = null;
                 
                 const filePath = path ? `${path}/${name}` : name;
-                const data = await dispatch(putFile(filePath, input.name)).catch(e => {
+                await dispatch(putFile(filePath, input.name)).catch(e => {
                     error = true;
                     console.log(e);
                 });
@@ -154,7 +154,7 @@ function DirentCard(props)
             let error = null;
             
             const dirPath = path ? `${path}/${name}` : name;
-            const data = await dispatch(deleteDir(dirPath)).catch(e => {
+            await dispatch(deleteDir(dirPath)).catch(e => {
                 error = true;
                 console.log(e);
             });
@@ -168,7 +168,7 @@ function DirentCard(props)
             let error = null;
             
             const filePath = path ? `${path}/${name}` : name;
-            const data = await dispatch(deleteFile(filePath)).catch(e => {
+            await dispatch(deleteFile(filePath)).catch(e => {
                 error = true;
                 console.log(e);
             });
@@ -188,7 +188,7 @@ function DirentCard(props)
             <Card.Body className="p-1 d-flex align-items-center justify-content-center">
                 <Container>
                     <Row className="d-flex align-items-center justify-content-between">
-                        <Col className="p-0 d-flex align-items-center justify-content-start" style={{maxWidth: "45%"}}>
+                        <Col className="p-0 d-flex align-items-center justify-content-start" style={{maxWidth: "60%"}}>
                             <Card.Text style={{
                                 textOverflow: "ellipsis",
                                 overflow: "hidden",

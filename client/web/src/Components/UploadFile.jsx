@@ -35,6 +35,8 @@ function UploadFile(props)
         setModalType(null);
     };
     
+    
+    
     async function handleUpload(e)
     {
         e.preventDefault();
@@ -50,11 +52,11 @@ function UploadFile(props)
             
             if(error)
             {
-                error.map(e => {
+                error.forEach(e => {
                     const {file} = e;
                     const msg = e.error.message;
                     
-                    uploadedFiles.map(f => {
+                    uploadedFiles.forEach(f => {
                         if(f.name === file)
                         {
                             f.success = false;

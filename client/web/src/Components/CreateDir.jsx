@@ -39,7 +39,7 @@ function CreateDir(props)
             let error = null;
             
             const dirPath = path ? `${path}/${input.name}` : input.name;
-            const data = await dispatch(postDir(dirPath, input.name)).catch(e => {
+            await dispatch(postDir(dirPath, input.name)).catch(e => {
                 error = true;
                 console.log(e);
             });

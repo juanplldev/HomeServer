@@ -52,7 +52,7 @@ function PathBar(props)
             }
             else
             {
-                const data = await dispatch(getDir(input.path)).catch(e => {
+                await dispatch(getDir(input.path)).catch(e => {
                     error = true;
                     console.log(e);
                 });
