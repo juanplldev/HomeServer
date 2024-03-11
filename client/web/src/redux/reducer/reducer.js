@@ -37,7 +37,7 @@ function rootReducer(state = initialState, {type, payload})
             return {...state, downloadFile: payload};
         
         case "POST_FILE":
-            return {...state, path: payload.path, content: payload.content};
+            return {...state};
         
         case "PUT_FILE":
             return {...state, path: payload.path, content: payload.content};

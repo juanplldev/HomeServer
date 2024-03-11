@@ -56,7 +56,7 @@ export function getDir(path)
         return dispatch({type: "GET_DIR", payload: data});
     };
 };
-// -----------------------------------------------------------------------------------------------------------------
+
 export function postDir(path, name)
 {
     return async function(dispatch)
@@ -64,21 +64,21 @@ export function postDir(path, name)
         const userData = window.localStorage.getItem("userData");
         const token = userData ? JSON.parse(userData).token : null;
         
+        const values = {name}
         const config =
         {
             headers:
             {
                 authorization: `Bearer ${token}`,
             },
-            data: name,
         };
         
-        const data = (await axios(`${API_URL}/dir/${path}?apiKey=${API_KEY}`, config)).data;
+        const data = (await axios.post(`${API_URL}/dir/${path}?apiKey=${API_KEY}`, values, config)).data;
         
         return dispatch({type: "POST_DIR", payload: data});
     };
 };
-// -----------------------------------------------------------------------------------------------------------------
+
 export function putDir(path, name)
 {
     return async function(dispatch)
@@ -143,8 +143,8 @@ export function getFile(path)
         return dispatch({type: "GET_FILE", payload: data});
     };
 };
-// -----------------------------------------------------------------------------------------------------------------
-export function postFile(path, name)
+
+export function postFile(path, files)
 {
     return async function(dispatch)
     {
@@ -157,15 +157,20 @@ export function postFile(path, name)
             {
                 authorization: `Bearer ${token}`,
             },
-            data: name,
         };
         
-        const data = (await axios(`${API_URL}/file/${path}?apiKey=${API_KEY}`, config)).data;
+        const formData = new FormData();
+        
+        files.forEach(file => {
+            formData.append(`file`, file);
+        });
+        
+        const data = (await axios.post(`${API_URL}/file/${path}?apiKey=${API_KEY}`, formData, config));
         
         return dispatch({type: "POST_FILE", payload: data});
     };
 };
-// -----------------------------------------------------------------------------------------------------------------
+
 export function putFile(path, name)
 {
     return async function(dispatch)

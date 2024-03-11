@@ -2,7 +2,7 @@
 import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {Form, FloatingLabel, Alert, Button} from "react-bootstrap";
+import {Form, FloatingLabel, Button} from "react-bootstrap";
 // Files
 import {getUsers, register} from "../../redux/actions/actions";
 import styles from "./Register.module.css";
@@ -17,7 +17,10 @@ function Register()
         password: "",
         repeatPassword: "",
     });
-    const [alert, setAlert] = useState(false);
+    const [validated, setValidated] = useState({
+        userName: true,
+        repeatPassword: true,
+    });
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -31,6 +34,7 @@ function Register()
     function handleChange(e)
     {
         setInput({...input, [e.target.name] : e.target.value});
+        setValidated({...validated, [e.target.name] : true});
     };
     
     async function handleSubmit(e)
@@ -41,12 +45,12 @@ function Register()
         if(foundUsername.length)
         {
             e.preventDefault();
-            setAlert("Username already in use.");
+            setValidated({...validated, userName: false});
         }
         else if(!passwordCheck)
         {
             e.preventDefault();
-            setAlert("Password does not match.");
+            setValidated({...validated, repeatPassword: false});
         }
         else
         {
@@ -57,7 +61,7 @@ function Register()
                 password: "",
                 repeatPassword: "",
             });
-            setAlert(false);
+            setValidated(true);
             navigate("/login");
         };
     };
@@ -71,28 +75,52 @@ function Register()
                 </div>
                 
                 <Form className={styles.Form} onSubmit={handleSubmit}>
-                    {
-                        alert && (
-                            <Alert key="danger" variant="danger">
-                                {alert}
-                            </Alert>
-                        )
-                    }
                     <Form.Group>
-                        <FloatingLabel controlId="floatingInput" label="Username" >
-                            <Form.Control onChange={handleChange} type="text" placeholder="Username" name="userName" value={input.userName} required/>
+                        <FloatingLabel label="Username" >
+                            <Form.Control
+                                type="text"
+                                name="userName"
+                                placeholder="Username"
+                                value={input.userName}
+                                onChange={handleChange}
+                                required
+                                isInvalid={!validated.userName}
+                            />
+                            
+                            <Form.Control.Feedback type="invalid">
+                                Username already in use.
+                            </Form.Control.Feedback>
                         </FloatingLabel>
                     </Form.Group>
                     
                     <Form.Group>
-                        <FloatingLabel controlId="floatingPassword" label="Password">
-                            <Form.Control onChange={handleChange} type="password" placeholder="Password" name="password" value={input.password} required/>
+                        <FloatingLabel label="Password">
+                            <Form.Control
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={input.password}
+                                onChange={handleChange}
+                                required
+                            />
                         </FloatingLabel>
                     </Form.Group>
                     
                     <Form.Group>
-                        <FloatingLabel controlId="floatingPassword" label="Repeat password">
-                            <Form.Control onChange={handleChange} type="password" placeholder="Repeat password" name="repeatPassword" value={input.repeatPassword} required/>
+                        <FloatingLabel label="Repeat password">
+                            <Form.Control
+                                type="password"
+                                name="repeatPassword"
+                                placeholder="Repeat password"
+                                value={input.repeatPassword}
+                                onChange={handleChange}
+                                required
+                                isInvalid={!validated.repeatPassword}
+                            />
+                            
+                            <Form.Control.Feedback type="invalid">
+                                Password does not match.
+                            </Form.Control.Feedback>
                         </FloatingLabel>
                     </Form.Group>
                     

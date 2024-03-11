@@ -2,7 +2,7 @@
 import React, {useState, useContext} from "react";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {Form, FloatingLabel, Alert, Button} from "react-bootstrap";
+import {Form, FloatingLabel, Button} from "react-bootstrap";
 // Files
 import AuthContext from "../../contexts/AuthContext";
 import {login} from "../../redux/actions/actions";
@@ -16,13 +16,14 @@ function Login()
         userName: "",
         password: "",
     });
-    const [alert, setAlert] = useState(false);
+    const [validated, setValidated] = useState(true);
     const navigate = useNavigate();
     const {/*authenticated*/ setAuthenticated} = useContext(AuthContext);
     
     function handleChange(e)
     {
         setInput({...input, [e.target.name] : e.target.value});
+        setValidated(true);
     };
     
     async function handleSubmit(e)
@@ -33,7 +34,7 @@ function Login()
         
         if(!data)
         {
-            setAlert("Incorrect username or password.");
+            setValidated(false);
         }
         else
         {
@@ -49,7 +50,7 @@ function Login()
                 userName: "",
                 password: "",
             });
-            setAlert(false);
+            setValidated(true);
             setAuthenticated(true);
             navigate("/");
         };
@@ -64,22 +65,40 @@ function Login()
                 </div>
                 
                 <Form className={styles.Form} onSubmit={handleSubmit}>
-                    {
-                        alert && (
-                            <Alert key="danger" variant="danger">
-                                {alert}
-                            </Alert>
-                        )
-                    }
                     <Form.Group>
-                        <FloatingLabel controlId="floatingInput" label="Username" >
-                            <Form.Control onChange={handleChange} type="text" placeholder="Username" name="userName" value={input.userName} required/>
+                        <FloatingLabel label="Username" >
+                            <Form.Control
+                                type="text"
+                                name="userName"
+                                placeholder="Username"
+                                value={input.userName}
+                                onChange={handleChange}
+                                required
+                                isInvalid={!validated}
+                            />
+                            
+                            <Form.Control.Feedback type="invalid">
+                                Incorrect username.
+                            </Form.Control.Feedback>
                         </FloatingLabel>
+                        
                     </Form.Group>
                     
                     <Form.Group>
-                        <FloatingLabel controlId="floatingPassword" label="Password">
-                            <Form.Control onChange={handleChange} type="password" placeholder="Password" name="password" value={input.password} required/>
+                        <FloatingLabel label="Password">
+                            <Form.Control
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={input.password}
+                                onChange={handleChange}
+                                required
+                                isInvalid={!validated}
+                            />
+                            
+                            <Form.Control.Feedback type="invalid">
+                                Incorrect password.
+                            </Form.Control.Feedback>
                         </FloatingLabel>
                     </Form.Group>
                     

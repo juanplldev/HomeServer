@@ -7,7 +7,8 @@ import {BrowserRouter} from "react-router-dom";
 import {AuthContext} from "./contexts/AuthContext";
 import store from "./redux/store/store";
 import App from "./App";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootswatch/dist/zephyr/bootstrap.min.css";
 
 
 ReactDOM.render(
