@@ -124,7 +124,7 @@ async function putDir(dirPath, dirName)
         else
         {
             let foundError = null;
-            const modPath = dirPath.substring(0, dirPath.lastIndexOf("/")) || "dirRoot";
+            const modPath = dirPath.substring(0, dirPath.lastIndexOf("/")) || "rootDir";
             const oldPath = joinRootPath(dirPath).path;
             const newPath = joinRootPath(modPath, dirName).path;
             

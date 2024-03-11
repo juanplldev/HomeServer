@@ -19,7 +19,6 @@ function joinRootPath(dir, dirName="", fileExt="")
     }
     else if(dir === "rootDir")
     {
-        console.log(dir);
         return {
             path: path.join(rootPath, path.basename(dirName, path.extname(dirName))) + fileExt,
             clientPath: path.join(dir, path.basename(dirName, path.extname(dirName))) + fileExt,
