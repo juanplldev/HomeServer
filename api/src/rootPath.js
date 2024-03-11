@@ -1,9 +1,9 @@
 // Dependencies
 require("dotenv").config();
 const path = require("path");
-
-
+// Files
 const rootPath = process.env.ROOT_PATH;
+
 
 if(!rootPath)
 {
@@ -17,6 +17,14 @@ function joinRootPath(dir, dirName="", fileExt="")
     {
         return {path: rootPath};
     }
+    else if(dir === "rootDir")
+    {
+        console.log(dir);
+        return {
+            path: path.join(rootPath, path.basename(dirName, path.extname(dirName))) + fileExt,
+            clientPath: path.join(dir, path.basename(dirName, path.extname(dirName))) + fileExt,
+        };
+    }
     else
     {
         return {
@@ -25,6 +33,7 @@ function joinRootPath(dir, dirName="", fileExt="")
         };
     };
 };
+
 
 module.exports = 
 {

@@ -29,7 +29,6 @@ async function signToken(data, secret, expiryTime)
     };
 };
 
-
 async function verifyToken(token, secret)
 {
     if(token)

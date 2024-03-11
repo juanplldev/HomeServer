@@ -60,20 +60,20 @@ async function getDir(dirName)
     };
 };
 
-async function postDir(dirPath, dirName)
+async function postDir(dirPath)
 {
     try
     {
-        if(!dirPath || !dirName)
+        if(!dirPath)
         {
-            const error = "Dir name or path not provided.";
+            const error = "Dir path not provided.";
             
             return {"Error": error};
         }
         else
         {
             let foundError = null;
-            const {path} = joinRootPath(dirPath, dirName);
+            const {path} = joinRootPath(dirPath);
             
             await fs.promises.mkdir(path).catch(e => {foundError = true; return});
             
@@ -124,7 +124,7 @@ async function putDir(dirPath, dirName)
         else
         {
             let foundError = null;
-            const modPath = dirPath.substring(0, dirPath.lastIndexOf("/"));
+            const modPath = dirPath.substring(0, dirPath.lastIndexOf("/")) || "dirRoot";
             const oldPath = joinRootPath(dirPath).path;
             const newPath = joinRootPath(modPath, dirName).path;
             

@@ -34,9 +34,8 @@ router.post("/dir/:path*?", isAuthenticated, processPath, async (req, res, next)
     try
     {
         const {path} = req.params;
-        const {name} = req.body;
         
-        const newDir = await postDir(path, name);
+        const newDir = await postDir(path);
         
         if(!newDir.Error)
         {

@@ -57,25 +57,54 @@ async function postFile(filePath, fileData)
         }
         else
         {
-            const {name, data, mimetype} = fileData;
-            const {path} = joinRootPath(filePath, name);
+            const rejectedFiles = [];
             
-            if(fs.existsSync(path))
-            {
-                const error =
-                {
-                    code: "EEXIST",
-                    message: "File already exists.",
-                    statusCode: 400,
-                };
+            filePath = !filePath ? "rootDir" : filePath;
+            
+            if(!Array.isArray(fileData)) fileData = [fileData];
+            
+            fileData.map(async (file) => {
+                const {name, data} = file;
+                const fileExt = fsPath.extname(name);
+                const {path} = joinRootPath(filePath, name, fileExt);
                 
-                return {"Error": error};
+                if(fs.existsSync(path))
+                {
+                    rejectedFiles.push({
+                        file: name,
+                        error:
+                        {
+                            code: "EEXIST",
+                            message: "File already exists.",
+                            statusCode: 400,
+                        },
+                    });
+                }
+                else
+                {
+                    await fs.promises.writeFile(path, data).catch(foundError => {
+                        if(foundError)
+                        {
+                            rejectedFiles.push({
+                                file: name,
+                                error:
+                                {
+                                    message: "Server error.",
+                                    statusCode: 500,
+                                },
+                            });
+                        };
+                    });
+                };
+            });
+            
+            if(rejectedFiles.length)
+            {
+                return {"Error": rejectedFiles};
             }
             else
             {
-                return {
-                    success: await fs.promises.writeFile(path, data)
-                };
+                return {success: true};
             };
         };
     }

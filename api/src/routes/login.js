@@ -8,7 +8,6 @@ const {comparePassword} = require("../services/bcrypt");
 const {getModelByParam} = require("../controllers/getDbMethods");
 
 
-// Post user credentials to login
 router.post("/login", async (req, res, next) => {
     const {userName, password} = req.body;
     
