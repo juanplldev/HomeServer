@@ -1,34 +1,30 @@
 // Dependencies
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {StyleSheet, View, Button, Alert, Text} from "react-native";
 import RNFS from "react-native-fs";
 // Files
 import getApiPaths from "./utils/getApiPaths";
+import {showBackupProgressNotification, showBackupCompleteNotification, clearDisplayedNotification} from "./utils/handleNotifications";
 import {getDirContent, postFiles} from "./api";
 import {DEST_FOLDER} from "@env";
 
 
 export default function App()
 {
-    const [backupProgress, setBackupProgress] = useState(0);
-    
     useEffect(() => {
-        handleBackup();
+        // handleBackup();
     }, []);
     
-    useEffect(() => {
-        if(backupProgress >= 100) setBackupProgress(0);
-    }, [backupProgress]);
     
     async function handleBackup()
     {
         try
         {
             const destPaths = await getApiPaths(DEST_FOLDER);
-            // console.log(destPaths);
-            let completedPaths = 0;
+            let pathsCount = 0;
             
-            const promises = destPaths.map(async path => {
+            for (const path of destPaths)
+            {
                 const {files} = await getDirContent(path);
                 
                 const clientPath = path.split("/").splice(1).join("/");
@@ -41,14 +37,19 @@ export default function App()
                 // if(newFiles.length) await postFiles(path, newFiles);
                 // console.log(newFiles, path);
                 
-                completedPaths += 1;
+                pathsCount ++;
                 
-                const newProgress = Math.round((completedPaths / destPaths.length) * 100);
+                const backupProgress = Math.round((pathsCount / destPaths.length) * 100);
                 
-                setBackupProgress(newProgress);
-            });
-            
-            await Promise.all(promises);
+                await showBackupProgressNotification(backupProgress, clientPath);
+                
+                if(backupProgress === 100)
+                {
+                    await clearDisplayedNotification("1");
+                    await showBackupCompleteNotification();
+                    return;
+                };
+            };
         }
         catch (error)
         {
@@ -56,12 +57,10 @@ export default function App()
         };
     };
     
-    // console.log(backupProgress);
     
     return (
         <View style={styles.container}>
             <Button title="Backup" onPress={handleBackup}/>
-            {/* <Text>Upload Progress: {backupProgress}%</Text> */}
         </View>
     );
 };
