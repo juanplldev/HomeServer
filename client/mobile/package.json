@@ -12,6 +12,7 @@
     "mime": "^4.0.3",
     "react": "18.2.0",
     "react-native": "0.74.2",
+    "react-native-background-fetch": "^4.2.5",
     "react-native-dotenv": "^3.4.11",
     "react-native-fs": "^2.20.0"
   },
