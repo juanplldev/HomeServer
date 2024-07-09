@@ -2,7 +2,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
-const fileUpload = require("express-fileupload");
+// const fileUpload = require("express-fileupload");
+const multer = require("multer");
 const cors = require("cors");
 const {isAuthorized} = require("./src/middlewares/localAuth.js");
 // Files
@@ -12,12 +13,14 @@ const {HOST="localhost", PORT=3000} = process.env;
 
 
 const server = express();
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 
 // Middlewares
 server.use(bodyParser.urlencoded({extended: false}));
 server.use(bodyParser.json({limit: "50mb"}));
 server.use(morgan("dev"));
-server.use(fileUpload());
+// server.use(fileUpload());
 server.use(cors());
 
 // Routes
@@ -30,3 +33,6 @@ server.listen(PORT, HOST, () => {
   .then(console.log("Tables done"))
   // .catch(error => console.error(error));
 });
+
+
+module.exports = upload;

@@ -2,10 +2,10 @@
 const {Router} = require("express");
 const router = Router();
 // Files
+const upload = require("../../server");
 const {getFile, postFile, putFile, deleteFile} = require("../controllers/fileMethods");
 const {isAuthenticated} = require("../middlewares/localAuth");
 const {processPath} = require("../middlewares/processPath");
-
 
 // Get file
 router.get("/file/:path*?", isAuthenticated, processPath, async (req, res, next) => {
@@ -30,13 +30,14 @@ router.get("/file/:path*?", isAuthenticated, processPath, async (req, res, next)
 });
 
 // Post file
-router.post("/file/:path*?", isAuthenticated, processPath, async (req, res, next) => {
+router.post("/file/:path*?", isAuthenticated, processPath, upload.array("files"), async (req, res, next) => {
     try
     {
         const {path} = req.params;
         const {file} = req.files;
-        
-        const newFile = await postFile(path, file);
+        console.log(file, path);
+        const newFile = {};
+        // const newFile = await postFile(path, file);
         
         if(!newFile.Error)
         {
