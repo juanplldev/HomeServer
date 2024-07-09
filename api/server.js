@@ -8,7 +8,7 @@ const {isAuthorized} = require("./src/middlewares/localAuth.js");
 // Files
 const {db} = require("./src/db");
 const routes = require("./src/routes/index.js");
-const {PORT = 3000} = process.env;
+const {HOST="localhost", PORT=3000} = process.env;
 
 
 const server = express();
@@ -24,8 +24,8 @@ server.use(cors());
 server.use("/", isAuthorized, routes);
 
 // Server starter
-server.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`Server is running on [${HOST}:${PORT}]`);
   db.sync({force: false})
   .then(console.log("Tables done"))
   // .catch(error => console.error(error));

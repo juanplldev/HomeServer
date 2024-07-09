@@ -15,9 +15,6 @@ const sequelize = new Sequelize(DB_URL, {
 userModel(sequelize);
 
 
-// ErrorLog.sync({force: true});
-
-
 module.exports =
 {
     ...sequelize.models,
