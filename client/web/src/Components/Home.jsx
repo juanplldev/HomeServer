@@ -17,8 +17,14 @@ function Home()
     const dirContent = useSelector(state => state.content);
     const params = useParams();
     const path = params.path && params["*"].length ? `${params.path}/${params["*"]}` : params.path || "";
-    const directories = dirContent && dirContent.directories;
-    const files = dirContent && dirContent.files;
+    
+    const directories = dirContent && dirContent.directories?.sort((a, b) => {
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+    });
+    const files = dirContent && dirContent.files?.sort((a, b) => {
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+    });
+    
     const rowProps = {className: "mx-auto my-3"};
     
     useEffect(() => {
