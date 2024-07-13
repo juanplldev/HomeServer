@@ -14,14 +14,14 @@ const {HOST="localhost", PORT=3000, TMP_PATH} = process.env;
 const server = express();
 
 // Middlewares
-server.use(bodyParser.urlencoded({extended: true}));
-server.use(bodyParser.json({limit: "50mb"}));
 server.use(morgan("dev"));
+server.use(cors());
+server.use(bodyParser.urlencoded({extended: true}));
+server.use(bodyParser.json());
 server.use(fileUpload({
   useTempFiles: true,
   tempFileDir: TMP_PATH,
 }));
-server.use(cors());
 
 // Routes
 server.use("/", isAuthorized, routes);
