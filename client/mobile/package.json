@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@notifee/react-native": "^7.8.2",
+    "@react-native-community/netinfo": "^11.3.2",
     "axios": "^1.7.2",
     "mime": "^4.0.3",
     "react": "18.2.0",

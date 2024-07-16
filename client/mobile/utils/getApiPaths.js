@@ -1,4 +1,3 @@
-// Dependencies
 // Files
 import {getDirContent} from "../api";
 

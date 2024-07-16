@@ -1,22 +1,20 @@
 // Dependencies
 import React, {useEffect} from "react";
-import {StyleSheet, View, Button, Alert, Text} from "react-native";
+import {StyleSheet, View, Button} from "react-native";
 // Files
-import {initBackupTask} from "./utils/backgroundTasks";
-import {handleBackup} from "./utils/handleBackup";
+import {initBackupTask} from "./utils/handleTasks";
+import {handleBackupUpload} from "./utils/handleBackupUpload";
 
 
 export default function App()
 {
     useEffect(() => {
-        console.log("restarted");
-        
         initBackupTask();
     }, []);
     
     return (
         <View style={styles.container}>
-            <Button title="Backup" onPress={handleBackup}/>
+            <Button title="Backup" onPress={async () => await handleBackupUpload()}/>
         </View>
     );
 };

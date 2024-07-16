@@ -2,9 +2,9 @@
 import notifee from "@notifee/react-native";
 
 
-export async function showBackupProgressNotification(progress, path)
+export async function showBackupProgressNotification(progress, path, file="", uploadProgress="")
 {
-    notifee.onBackgroundEvent(async () => {});
+    const preparing = progress === 0;
     
     const channelId = await notifee.createChannel({
         id: "progress",
@@ -16,23 +16,26 @@ export async function showBackupProgressNotification(progress, path)
         id: "1",
         title: "Personal backup",
         subtitle: `${progress}%`,
-        body: `Uploading: ${path}/`,
+        body: preparing ? "Preparing..." : `Uploading: /${path}/${file.length > 16 ? file.slice(0, 16) + "..." : file} ${uploadProgress && uploadProgress + "%"}`,
         android: {
             channelId,
             progress: {
                 current: progress,
                 max: 100,
+                indeterminate: preparing,
             },
             ongoing: true,
             onlyAlertOnce: true,
+            pressAction: {
+                id: "default",
+                launchActivity: "default",
+            },
         },
     });
 };
 
 export async function showBackupCompleteNotification()
 {
-    notifee.onBackgroundEvent(async () => {});
-    
     const channelId = await notifee.createChannel({
         id: "complete",
         name: "Backup completed",
@@ -45,13 +48,16 @@ export async function showBackupCompleteNotification()
         body: `Completed successfully`,
         android: {
             channelId,
+            pressAction: {
+                id: "default",
+                launchActivity: "default",
+            },
+            showTimestamp: true,
         },
     });
 };
 
 export async function clearDisplayedNotification(id)
 {
-    notifee.onBackgroundEvent(async () => {});
-    
     await notifee.cancelNotification(id);
 };
