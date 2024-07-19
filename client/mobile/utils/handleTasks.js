@@ -10,7 +10,7 @@ export async function initBackupTask()
     {
         await BackgroundFetch.configure(
             {
-                minimumFetchInterval: 15,
+                minimumFetchInterval: 120,
                 stopOnTerminate: false,
                 startOnBoot: true,
                 enableHeadless: true,
@@ -20,7 +20,7 @@ export async function initBackupTask()
                 console.log("[BackgroundFetch] taskId:", taskId);
                 const now = new Date();
                 
-                if(now.getHours() > 2 && now.getHours() < 5)
+                if(now.getHours() >= 3 && now.getHours() <= 5)
                 {
                     await handleBackupUpload();
                 };
@@ -34,8 +34,8 @@ export async function initBackupTask()
         );
         
         await BackgroundFetch.scheduleTask({
-            taskId: "react-native-background-fetch",
-            delay: 60 * 1000 * 60,
+            taskId: "com.mobile.backup_task",
+            delay: 0,
             periodic: true,
             stopOnTerminate: false,
             startOnBoot: true,
@@ -50,9 +50,12 @@ export async function initBackupTask()
     };
 };
 
-export async function setBackupHeadlessTask(event)
+export async function backupHeadlessTask(event)
 {
+    console.log('[BackgroundFetch HeadlessTask] start');
+    
     const taskId = event?.taskId;
+    const now = new Date();
     
     try
     {
@@ -63,7 +66,10 @@ export async function setBackupHeadlessTask(event)
             return;
         };
         
-        await handleBackupUpload();
+        if(now.getHours() >= 3 && now.getHours() <= 5)
+        {
+            await handleBackupUpload();
+        };
     }
     catch (error)
     {
