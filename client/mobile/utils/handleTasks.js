@@ -10,7 +10,7 @@ export async function initBackupTask()
     {
         await BackgroundFetch.configure(
             {
-                minimumFetchInterval: 120,
+                minimumFetchInterval: 30,
                 stopOnTerminate: false,
                 startOnBoot: true,
                 enableHeadless: true,
@@ -20,7 +20,7 @@ export async function initBackupTask()
                 console.log("[BackgroundFetch] taskId:", taskId);
                 const now = new Date();
                 
-                if(now.getHours() >= 3 && now.getHours() <= 5)
+                if(now.getHours() === 3 && now.getMinutes() <= 35)
                 {
                     await handleBackupUpload();
                 };
@@ -66,7 +66,7 @@ export async function backupHeadlessTask(event)
             return;
         };
         
-        if(now.getHours() >= 3 && now.getHours() <= 5)
+        if(now.getHours() === 3 && now.getMinutes() <= 35)
         {
             await handleBackupUpload();
         };

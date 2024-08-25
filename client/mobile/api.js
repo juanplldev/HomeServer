@@ -44,7 +44,7 @@ export async function getDirContent(path="")
 };
 
 
-export async function postFile(path, file, showBackupProgressNotification, backupProgress)
+export async function postFile(path, file, handleUploadProgress)
 {
     const config =
     {
@@ -53,10 +53,7 @@ export async function postFile(path, file, showBackupProgressNotification, backu
             authorization: `Bearer ${API_TOKEN}`,
             "Content-Type": "multipart/form-data",
         },
-        onUploadProgress: async (progressEvent) => {
-            const uploadProgress = Math.floor((progressEvent.loaded / progressEvent.total) * 100);
-            await showBackupProgressNotification(backupProgress, path, file.name, uploadProgress);
-        },
+        onUploadProgress: handleUploadProgress,
     };
     
     const formData = new FormData();
@@ -85,8 +82,10 @@ export async function postFile(path, file, showBackupProgressNotification, backu
         }
         else
         {
-            console.error(error, "on", path);
+            console.error(error, "on", file.path);
         };
+        
+        throw new Error(error);
     };
 };
 
