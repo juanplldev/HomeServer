@@ -51,7 +51,7 @@ Add the following environment variables to your .env file.
 
 `REACT_APP_URL`: Your server url and port (Ex. "http://localhost:3000").
 
-`REACT_APP_HOST`: Your client url (IP) and port (Ex. "http://192.168.0.00:4000/").
+`REACT_APP_HOST`: Your client url (IP) and port (Ex. "http://192.168.x.xx:4000/").
 
 `REACT_APP_API_KEY`: Your same custom api key.
 ## Run Project
@@ -110,9 +110,9 @@ Start the server
 
 ## To Do
 
-- Add mobile support.
+- [X] Add mobile support.
 
-- Add automatized upload (like a backup).
+- [X] Add automatized upload (like a security copy).
 
 ## Contact
 
