@@ -1,11 +1,11 @@
 # Home Server
 
-This is a simple home cloud project designed to run on a PC and access over a local Wi-Fi network.
+This is a home cloud project designed to run on a separate PC and access over a local Wi-Fi network.
 
 ## Features
 
 - Browse folders and files
-- Search directory by path
+- Simple login system
 - Upload/Download files
 - Edit/delete file names
 - Create/Edit/Delete folder names
@@ -26,7 +26,7 @@ This is a simple home cloud project designed to run on a PC and access over a lo
 ## Getting Started
 
 ### IP Adress
-You will need to know your PC IP adress to access from your local Wi-Fi network.
+You will need to know your PC IP address to access from your local Wi-Fi network.
 
 ### Environment Variables
 Add the following environment variables to your .env file.
@@ -43,7 +43,7 @@ Add the following environment variables to your .env file.
 
 `PORT`: Your localhost port (default: 3000).
 
-`API_KEY`: Your custom api key.
+`API_KEY`: Your custom API key.
 
 `JWT_SECRET`: Your custom secret for JWT.
 
@@ -53,7 +53,8 @@ Add the following environment variables to your .env file.
 
 `REACT_APP_HOST`: Your client url (IP) and port (Ex. "http://192.168.x.xx:4000/").
 
-`REACT_APP_API_KEY`: Your same custom api key.
+`REACT_APP_API_KEY`: Your same custom API key.
+
 ## Run Project
 
 Clone the project
@@ -62,7 +63,7 @@ Clone the project
   git clone https://github.com/juanplldev/HomeServer.git
 ```
 
-Go to the project directory
+Navigate to the project directory
 
 ```bash
   cd HomeServer
@@ -70,7 +71,7 @@ Go to the project directory
 
 **Start server**
 
-Go to the server directory
+Navigate to the server directory
 
 ```bash
   cd api
@@ -90,7 +91,7 @@ Start the server
 
 **Start client**
 
-Go to the client directory
+Navigate to the client directory
 
 ```bash
   cd client/web
@@ -102,11 +103,20 @@ Install dependencies
   npm install
 ```
 
-Start the server
+Start the client
 
 ```bash
   npm start
 ```
+
+## Create user
+
+Navigate to `api/src/routes/index.js` and uncomment the register route (L14).
+
+With this route enabled you will have access to `your_client_url/register`.
+
+> **_NOTE:_** The cloud does not distinguish between users; all users created will have access to the same folders.
+> So, remember to re-comment the register route on `api/src/routes/index.js` to prevent unexpected access.
 
 ## To Do
 
