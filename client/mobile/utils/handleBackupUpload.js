@@ -22,8 +22,6 @@ export async function handleBackupUpload()
             
             const destPaths = await getApiPaths(DEST_FOLDER);
             const newFiles = await prepareBackup(destPaths);
-            // const newFiles = 12;
-            console.log("[New files]:", newFiles);
             
             let filesCount = 0;
             let backupProgress = 0;

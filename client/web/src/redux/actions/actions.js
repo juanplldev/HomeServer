@@ -1,8 +1,8 @@
 // Dependencies
 import axios from "axios";
 // Files
-const {REACT_APP_URL, REACT_APP_API_KEY} = process.env;
-const API_URL = REACT_APP_URL;
+const {REACT_APP_API, REACT_APP_API_KEY} = process.env;
+const API_URL = REACT_APP_API;
 const API_KEY = REACT_APP_API_KEY;
 
 
