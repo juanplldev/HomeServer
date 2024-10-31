@@ -18,10 +18,7 @@ server.use(morgan("dev"));
 server.use(cors());
 server.use(bodyParser.urlencoded({extended: true}));
 server.use(bodyParser.json());
-server.use(fileUpload({
-  useTempFiles: true,
-  tempFileDir: TMP_PATH,
-}));
+server.use(fileUpload());
 
 // Routes
 server.use("/", isAuthorized, routes);
