@@ -8,7 +8,7 @@ const {isAuthorized} = require("./src/middlewares/localAuth.js");
 // Files
 const {db} = require("./src/db");
 const routes = require("./src/routes/index.js");
-const {HOST="localhost", PORT=3000, TMP_PATH} = process.env;
+const {HOST="localhost", PORT=3000} = process.env;
 
 
 const server = express();
