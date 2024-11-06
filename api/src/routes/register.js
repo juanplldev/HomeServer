@@ -6,9 +6,10 @@ const {User} = require("../db");
 const {hashPassword} = require("../services/bcrypt");
 const {getModelByParam} = require("../controllers/getDbMethods");
 const {postModel} = require("../controllers/postDbMethods");
+const {isAdmin} = require("../middlewares/localAuth");
 
 
-router.post("/register", async (req, res, next) => {
+router.post("/register", isAdmin, async (req, res, next) => {
     const {userName, password} = req.body;
     
     try
@@ -24,6 +25,7 @@ router.post("/register", async (req, res, next) => {
                 {
                     userName: userName && userName,
                     password: hashedPassword,
+                    isAdmin: false,
                 };
                 
                 await postModel(User, content);

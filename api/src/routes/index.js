@@ -11,7 +11,7 @@ const files = require("./files");
 
 // Routers settings
 router.use(user);
-// router.use(register);
+router.use(register);
 router.use(login);
 router.use(directories);
 router.use(files);

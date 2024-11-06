@@ -73,10 +73,45 @@ async function isAuthorized(req, res, next)
     };
 };
 
+async function isAdmin(req, res, next)
+{
+    const {authorization} = req.headers;
+    
+    if(authorization)
+    {
+        const decodedToken = await readToken(authorization, JWT_SECRET);
+        const userId = decodedToken !== undefined ? decodedToken.id : null;
+        
+        if(userId)
+        {
+            const foundUser = await getModelById(User, userId);
+            console.log(foundUser.dataValues.isAdmin);
+            
+            if(foundUser.dataValues?.isAdmin)
+            {
+                return next();
+            }
+            else
+            {
+                res.status(404).send("You must be an administrator to create new accounts.");
+            };
+        }
+        else
+        {
+            res.status(404).send("You must be an administrator to create new accounts.");
+        };
+    }
+    else
+    {
+        res.status(404).send("You must be an administrator to create new accounts.");
+    };
+};
+
 
 module.exports =
 {
     authenticateUser,
     isAuthenticated,
     isAuthorized,
+    isAdmin,
 };
