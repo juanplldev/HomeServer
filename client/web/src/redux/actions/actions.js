@@ -10,7 +10,18 @@ export function register(values)
 {
     return async function(dispatch)
     {
-        const data = (await axios.post(`${API_URL}/register?apiKey=${API_KEY}`, values)).data;
+        const userData = window.localStorage.getItem("userData");
+        const token = userData ? JSON.parse(userData).token : null;
+        
+        const config =
+        {
+            headers:
+            {
+                authorization: `Bearer ${token}`,
+            },
+        };
+        
+        const data = (await axios.post(`${API_URL}/register?apiKey=${API_KEY}`, values, config)).data;
         
         return dispatch({type: "REGISTER", payload: data});
     };

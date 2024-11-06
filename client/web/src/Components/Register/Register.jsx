@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {Form, FloatingLabel, Button} from "react-bootstrap";
 // Files
 import {getUsers, register} from "../../redux/actions/actions";
+import AxiosErrorHandler from "../AxiosErrorHandler";
 import styles from "./Register.module.css";
 
 
@@ -21,6 +22,8 @@ function Register()
         userName: true,
         repeatPassword: true,
     });
+    const [axiosError, setAxiosError] = useState(null);
+    
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -30,6 +33,7 @@ function Register()
         };
         fetchData();
     }, [dispatch]);
+    
     
     function handleChange(e)
     {
@@ -55,7 +59,17 @@ function Register()
         else
         {
             e.preventDefault();
-            await dispatch(register(input));
+            
+            try
+            {
+                await dispatch(register(input));
+            }
+            catch(error)
+            {
+                setAxiosError(error.response?.data);
+                return;
+            };
+            
             setInput({
                 userName: "",
                 password: "",
@@ -126,6 +140,10 @@ function Register()
                     
                     <Button type="submit">Register</Button>
                 </Form>
+                
+                {
+                    axiosError && <AxiosErrorHandler error={axiosError}/>
+                }
             </div>
         </div>
     );

@@ -9,7 +9,7 @@ function CustomModal(props)
 {
     const [validated, setValidated] = useState(true);
     const [isEmpty, setIsEmpty] = useState(true);
-    const {type, input, name, showModal, handleCloseModal, submitAction, setInput} = props;
+    const {type="", input=[], name, showModal, handleCloseModal, submitAction, setInput} = props;
     
     useEffect(() => {
         if(Array.isArray(input))
@@ -194,6 +194,22 @@ function CustomModal(props)
                     </Modal.Body>
                     
                     <Button disabled={isEmpty} onClick={handleSubmit}>Upload</Button>
+                </Modal>
+            </div>
+        );
+    }
+    else if(type === "AxiosError")
+    {
+        return (
+            <div onClick={e => e.preventDefault()}>
+                <Modal centered show={showModal} onHide={handleCloseModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Axios Error</Modal.Title>
+                    </Modal.Header>
+                    
+                    <Modal.Body className="d-flex flex-column align-items-start">
+                        {name}
+                    </Modal.Body>
                 </Modal>
             </div>
         );
