@@ -3,9 +3,9 @@ const {Router} = require("express");
 const router = Router();
 // Files
 const {User} = require("../db");
-const {authenticateUser} = require("../middlewares/localAuth");
+const {authenticateUser, isAdmin} = require("../middlewares/localAuth");
 const {comparePassword} = require("../services/bcrypt");
-const {getModelByParam} = require("../controllers/getDbMethods");
+const {getModelByParam} = require("../controllers/dbMethods");
 
 
 router.post("/login", async (req, res, next) => {
@@ -15,7 +15,19 @@ router.post("/login", async (req, res, next) => {
     {
         if(userName && password)
         {
-            const foundUser = await getModelByParam(User, "userName", userName, "one");
+            const splittedUserName = userName.trim().split(" ");
+            let modifiedUserName = userName;
+            
+            if(splittedUserName.length === 1)
+            {
+                modifiedUserName = userName.charAt(0).toUpperCase() + String(userName).slice(1);
+            }
+            else
+            {
+                modifiedUserName = splittedUserName[0].at(0).toUpperCase() + splittedUserName[0].slice(1) + " " + splittedUserName[1].at(0).toUpperCase() + splittedUserName[1].slice(1);
+            };
+            
+            const foundUser = await getModelByParam(User, "username", modifiedUserName, "one");
             
             if(!foundUser.Error)
             {
@@ -25,8 +37,14 @@ router.post("/login", async (req, res, next) => {
                 if(checkPassword)
                 {
                     const token = await authenticateUser(foundUser.dataValues);
+                    const content =
+                    {
+                        userId: foundUser.dataValues.id,
+                        isAdmin: foundUser.dataValues.isAdmin,
+                        token,
+                    };
                     
-                    res.status(200).send({msg: "User logged in.", content: token});
+                    res.status(200).send({msg: "User logged in.", content});
                 }
                 else
                 {

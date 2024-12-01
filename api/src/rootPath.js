@@ -2,17 +2,25 @@
 require("dotenv").config();
 const path = require("path");
 // Files
-const rootPath = process.env.ROOT_PATH;
+const {getUser} = require("./controllers/userMethods");
 
 
-if(!rootPath)
+async function getUserRootPath(id)
 {
-    console.error("Storage path not defined.", "Set value for ROOR_PATH environment variable.");
-    process.exit(1);
-};
+    const {dataValues} = await getUser(id);
+    return dataValues.filesPath;
+}
 
-function joinRootPath(dir, dirName="", fileExt="")
+async function joinRootPath(userId, dir, dirName="", fileExt="")
 {
+    const rootPath = await getUserRootPath(userId);
+    
+    if(!rootPath)
+    {
+        console.error("Storage path not defined.", "Set files path on User database.");
+        process.exit(1);
+    };
+    
     if(!dir)
     {
         return {path: rootPath};
@@ -36,6 +44,5 @@ function joinRootPath(dir, dirName="", fileExt="")
 
 module.exports = 
 {
-    rootPath,
     joinRootPath,
 };

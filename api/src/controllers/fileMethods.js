@@ -5,11 +5,11 @@ const fsPath = require("path");
 const {joinRootPath} = require("../rootPath");
 
 
-async function getFile(filePath, res)
+async function getFile(userId, filePath, res)
 {
     try
     {
-        const {path} = joinRootPath(filePath);
+        const {path} = await joinRootPath(userId, filePath);
         const name = filePath.substring(filePath.lastIndexOf("/"));
         
         if (fs.existsSync(path))
@@ -45,7 +45,7 @@ async function getFile(filePath, res)
     };
 };
 
-async function postFile(filePath, fileData)
+async function postFile(userId, filePath, fileData)
 {
     try
     {
@@ -66,7 +66,7 @@ async function postFile(filePath, fileData)
             fileData.map(async (file) => {
                 const {name, data} = file;
                 const fileExt = fsPath.extname(name);
-                const {path} = joinRootPath(filePath, name, fileExt);
+                const {path} = await joinRootPath(userId, filePath, name, fileExt);
                 
                 if(fs.existsSync(path))
                 {
@@ -114,7 +114,7 @@ async function postFile(filePath, fileData)
     };
 };
 
-async function putFile(filePath, fileName)
+async function putFile(userId, filePath, fileName)
 {
     try
     {
@@ -130,14 +130,14 @@ async function putFile(filePath, fileName)
             let fileExt = fsPath.extname(fileName);
             
             const modPath = filePath.substring(0, filePath.lastIndexOf("/")) || "/";
-            const oldPath = joinRootPath(filePath).path;
+            const oldPath = await joinRootPath(userId, filePath).path;
             
             if(!fileExt)
             {
                 fileExt = fsPath.extname(oldPath);
             };
             
-            const newPath = joinRootPath(modPath, fileName, fileExt).path;
+            const newPath = await joinRootPath(userId, modPath, fileName, fileExt).path;
             
             await fs.promises.rename(oldPath, newPath).catch(e => {foundError = true; return});
             
@@ -164,12 +164,12 @@ async function putFile(filePath, fileName)
     };
 };
 
-async function deleteFile(filePath)
+async function deleteFile(userId, filePath)
 {
     try
     {
         let foundError = null;
-        const {path} = joinRootPath(filePath);
+        const {path} = await joinRootPath(userId, filePath);
         
         await fs.promises.unlink(path, {recursive: true}).catch(e => {foundError = true; return});
         
@@ -195,20 +195,6 @@ async function deleteFile(filePath)
     };
 };
 
-
-
-
-async function backup(path, time)
-{
-    try
-    {
-        
-    }
-    catch(error)
-    {
-        console.error(error);
-    };
-};
 
 module.exports =
 {

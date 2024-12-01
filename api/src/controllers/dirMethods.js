@@ -4,12 +4,13 @@ const fs = require("fs");
 const {joinRootPath} = require("../rootPath");
 
 
-async function getDir(dirName)
+async function getDir(userId, dirName)
 {
     try
     {
         let foundError = false;
-        const {path, clientPath} = joinRootPath(dirName);
+        const {path, clientPath} = await joinRootPath(userId, dirName);
+        
         const dir = await fs.promises.opendir(path).catch(e => {foundError = true; return});
         const dirContent =
         {
@@ -60,7 +61,7 @@ async function getDir(dirName)
     };
 };
 
-async function postDir(dirPath)
+async function postDir(userId, dirPath)
 {
     try
     {
@@ -73,7 +74,7 @@ async function postDir(dirPath)
         else
         {
             let foundError = null;
-            const {path} = joinRootPath(dirPath);
+            const {path} = await joinRootPath(userId, dirPath);
             
             await fs.promises.mkdir(path).catch(e => {foundError = true; return});
             
@@ -111,7 +112,7 @@ async function postDir(dirPath)
     };
 };
 
-async function putDir(dirPath, dirName)
+async function putDir(userId, dirPath, dirName)
 {
     try
     {
@@ -125,8 +126,8 @@ async function putDir(dirPath, dirName)
         {
             let foundError = null;
             const modPath = dirPath.substring(0, dirPath.lastIndexOf("/")) || "rootDir";
-            const oldPath = joinRootPath(dirPath).path;
-            const newPath = joinRootPath(modPath, dirName).path;
+            const oldPath = await joinRootPath(userId, dirPath).path;
+            const newPath = await joinRootPath(userId, modPath, dirName).path;
             
             await fs.promises.rename(oldPath, newPath).catch(e => {foundError = true; return});
             
@@ -164,12 +165,12 @@ async function putDir(dirPath, dirName)
     };
 };
 
-async function deleteDir(dirPath)
+async function deleteDir(userId, dirPath)
 {
     try
     {
         let foundError = null;
-        const {path} = joinRootPath(dirPath);
+        const {path} = await joinRootPath(userId, dirPath);
         
         await fs.promises.rmdir(path, {recursive: true}).catch(e => {foundError = true; return});
         
@@ -206,20 +207,6 @@ async function deleteDir(dirPath)
     };
 };
 
-
-
-
-async function backup(path, time)
-{
-    try
-    {
-        
-    }
-    catch(error)
-    {
-        console.error(error);
-    };
-};
 
 module.exports =
 {

@@ -3,16 +3,17 @@ const {Router} = require("express");
 const router = Router();
 // Files
 const {getDir, postDir, putDir, deleteDir} = require("../controllers/dirMethods");
-const {isAuthenticated} = require("../middlewares/localAuth");
+const {isAuthenticated, isOwner} = require("../middlewares/localAuth");
 const {processPath} = require("../middlewares/processPath");
 
 
 // Get directory
-router.get("/dir/:path*?", isAuthenticated, processPath, async (req, res, next) => {
+router.get("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async (req, res, next) => {
     try
     {
-        const {path} = req.params;
-        const dirInfo = await getDir(path);
+        const {userId, path} = req.params;
+        
+        const dirInfo = await getDir(userId, path);
         
         if(!dirInfo.Error)
         {
@@ -30,12 +31,12 @@ router.get("/dir/:path*?", isAuthenticated, processPath, async (req, res, next) 
 });
 
 // Post directory
-router.post("/dir/:path*?", isAuthenticated, processPath, async (req, res, next) => {
+router.post("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async (req, res, next) => {
     try
     {
-        const {path} = req.params;
+        const {userId, path} = req.params;
         
-        const newDir = await postDir(path);
+        const newDir = await postDir(userId, path);
         
         if(!newDir.Error)
         {
@@ -53,13 +54,13 @@ router.post("/dir/:path*?", isAuthenticated, processPath, async (req, res, next)
 });
 
 // Put directory
-router.put("/dir/:path*", isAuthenticated, processPath, async (req, res, next) => {
+router.put("/:userId/dir/:path*", isAuthenticated, isOwner, processPath, async (req, res, next) => {
     try
     {
-        const {path} = req.params;
+        const {userId, path} = req.params;
         const {name} = req.body;
         
-        const updatedDir = await putDir(path, name);
+        const updatedDir = await putDir(userId, path, name);
         
         if(!updatedDir.Error)
         {
@@ -77,16 +78,16 @@ router.put("/dir/:path*", isAuthenticated, processPath, async (req, res, next) =
 });
 
 // Delete directory
-router.delete("/dir/:path*", isAuthenticated, processPath, async (req, res, next) => {
+router.delete("/:userId/dir/:path*", isAuthenticated, isOwner, processPath, async (req, res, next) => {
     try
     {
-        const {path} = req.params;
+        const {userId, path} = req.params;
         
-        const deletedDir = await deleteDir(path);
+        const deletedDir = await deleteDir(userId, path);
         
         if(!deletedDir.Error)
         {
-            res.status(200).send(deletedDir);
+            res.status(200).send("Directory deleted successfully.");
         }
         else
         {

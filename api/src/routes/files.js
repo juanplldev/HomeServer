@@ -3,15 +3,16 @@ const {Router} = require("express");
 const router = Router();
 // Files
 const {getFile, postFile, putFile, deleteFile} = require("../controllers/fileMethods");
-const {isAuthenticated} = require("../middlewares/localAuth");
+const {isAuthenticated, isOwner} = require("../middlewares/localAuth");
 const {processPath} = require("../middlewares/processPath");
 
 // Get file
-router.get("/file/:path*?", isAuthenticated, processPath, async (req, res, next) => {
+router.get("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, async (req, res, next) => {
     try
     {
-        const {path} = req.params;
-        const fileInfo = await getFile(path, res);
+        const {userId, path} = req.params;
+        
+        const fileInfo = await getFile(userId, path, res);
         
         if(!fileInfo.Error)
         {
@@ -29,13 +30,13 @@ router.get("/file/:path*?", isAuthenticated, processPath, async (req, res, next)
 });
 
 // Post file
-router.post("/file/:path*?", isAuthenticated, processPath, async (req, res, next) => {
+router.post("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, async (req, res, next) => {
     try
     {
-        const {path} = req.params;
+        const {userId, path} = req.params;
         const file = req.files?.file;
         
-        const newFile = await postFile(path, file);
+        const newFile = await postFile(userId, path, file);
         
         if(!newFile.Error)
         {
@@ -53,13 +54,13 @@ router.post("/file/:path*?", isAuthenticated, processPath, async (req, res, next
 });
 
 // Put file
-router.put("/file/:path*", isAuthenticated, processPath, async (req, res, next) => {
+router.put("/:userId/file/:path*", isAuthenticated, isOwner, processPath, async (req, res, next) => {
     try
     {
-        const {path} = req.params;
+        const {userId, path} = req.params;
         const {name} = req.body;
         
-        const updatedFile = await putFile(path, name);
+        const updatedFile = await putFile(userId, path, name);
         
         if(!updatedFile.Error)
         {
@@ -77,16 +78,16 @@ router.put("/file/:path*", isAuthenticated, processPath, async (req, res, next) 
 });
 
 // Delete file
-router.delete("/file/:path*", isAuthenticated, processPath, async (req, res, next) => {
+router.delete("/:userId/file/:path*", isAuthenticated, isOwner, processPath, async (req, res, next) => {
     try
     {
-        const {path} = req.params;
+        const {userId, path} = req.params;
         
-        const deletedFile = await deleteFile(path);
+        const deletedFile = await deleteFile(userId, path);
         
         if(!deletedFile.Error)
         {
-            res.status(200).send(deletedFile);
+            res.status(200).send("File deleted successfully.");
         }
         else
         {

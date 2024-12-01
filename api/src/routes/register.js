@@ -2,34 +2,21 @@
 const {Router} = require("express");
 const router = Router();
 // Files
-const {User} = require("../db");
-const {hashPassword} = require("../services/bcrypt");
-const {getModelByParam} = require("../controllers/getDbMethods");
-const {postModel} = require("../controllers/postDbMethods");
+const {postUser} = require("../controllers/userMethods");
 const {isAdmin} = require("../middlewares/localAuth");
 
 
 router.post("/register", isAdmin, async (req, res, next) => {
-    const {userName, password} = req.body;
+    const {userName, password, filesPath} = req.body;
     
     try
     {
-        if(userName && password)
+        if(userName && password && filesPath)
         {
-            const foundUser = await getModelByParam(User, "userName", userName, "one");
+            const newUser = await postUser({userName, password, filesPath});
             
-            if(foundUser.Error)
+            if(newUser)
             {
-                const hashedPassword = await hashPassword(password);
-                const content =
-                {
-                    userName: userName && userName,
-                    password: hashedPassword,
-                    isAdmin: false,
-                };
-                
-                await postModel(User, content);
-                
                 res.status(200).send("User created successfully.");
             }
             else
@@ -39,7 +26,7 @@ router.post("/register", isAdmin, async (req, res, next) => {
         }
         else
         {
-            res.status(404).send("Username and password required.");
+            res.status(404).send("Username, password and files path required.");
         };
     }
     catch(error)

@@ -18,7 +18,7 @@ async function signToken(data, secret, expiryTime)
         }
         catch(error)
         {
-            return {"Error": error};
+            console.error(error);
         };
     }
     else
@@ -39,7 +39,7 @@ async function verifyToken(token, secret)
         }
         catch(error)
         {
-            return {"Error": error};
+            console.error(error);
         };
     }
     else
@@ -63,7 +63,7 @@ async function readToken(authorization, secret)
         }
         catch(error)
         {
-            return {"Error": error};
+            console.error(error);
         };
     }
     else

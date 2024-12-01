@@ -1,6 +1,5 @@
 // Files
-const {User} = require("../db");
-const {getModelById} = require("../controllers/getDbMethods");
+const {getUser} = require("../controllers/userMethods");
 const {signToken, readToken} = require("../services/jwt");
 const {API_KEY, JWT_SECRET} = process.env;
 
@@ -11,6 +10,9 @@ async function authenticateUser(content)
         {
             id: content.id,
             userName: content.userName,
+            isAdmin: content.isAdmin,
+            avatar: content.avatar,
+            filesPath: content.filesPath,
         },
         JWT_SECRET,
         "1000d",
@@ -18,7 +20,6 @@ async function authenticateUser(content)
     
     return token;
 };
-
 
 async function isAuthenticated(req, res, next)
 {
@@ -31,12 +32,11 @@ async function isAuthenticated(req, res, next)
         
         if(userId)
         {
-            const foundUser = await getModelById(User, userId);
+            const foundUser = await getUser(userId);
             
             if(!foundUser.Error)
             {
-                const {id, userName} = foundUser.dataValues;
-                const userData = {id, userName};
+                const userData = {id, userName, filesPath} = foundUser.dataValues;
                 
                 req.userData = userData;
                 
@@ -55,6 +55,20 @@ async function isAuthenticated(req, res, next)
     else
     {
         res.status(404).send("No authorization.");
+    };
+};
+
+async function isOwner(req, res, next)
+{
+    const {userId} = req.params;
+    
+    if(userId === req.userData.id)
+    {
+        return next();
+    }
+    else
+    {
+        res.status(404).send("You must be the owner.");
     };
 };
 
@@ -84,8 +98,7 @@ async function isAdmin(req, res, next)
         
         if(userId)
         {
-            const foundUser = await getModelById(User, userId);
-            console.log(foundUser.dataValues.isAdmin);
+            const foundUser = await getUser(userId);
             
             if(foundUser.dataValues?.isAdmin)
             {
@@ -112,6 +125,7 @@ module.exports =
 {
     authenticateUser,
     isAuthenticated,
+    isOwner,
     isAuthorized,
     isAdmin,
 };
