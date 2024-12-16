@@ -5,7 +5,7 @@ import {Container} from "react-bootstrap";
 import CustomModal from "./CustomModal.jsx";
 
 
-function AxiosErrorHandler(props)
+export default function AxiosErrorHandler(props)
 {
     const [showModal, setShowModal] = useState(true);
     const [modalType, setModalType] = useState("AxiosError");
@@ -28,6 +28,3 @@ function AxiosErrorHandler(props)
         </Container>
     );
 };
-
-
-export default AxiosErrorHandler;

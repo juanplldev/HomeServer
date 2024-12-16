@@ -11,7 +11,7 @@ export function register(values)
     return async function(dispatch)
     {
         const userData = window.localStorage.getItem("userData");
-        const token = userData ? JSON.parse(userData).token : null;
+        const {token} = userData ? JSON.parse(userData) : {};
         
         const config =
         {
@@ -37,11 +37,22 @@ export function login(values)
     };
 };
 
-export function getUsers()
+export function getUsers(id="")
 {
     return async function(dispatch)
     {
-        const data = (await axios(`${API_URL}/users?apiKey=${API_KEY}`)).data;
+        const userData = window.localStorage.getItem("userData");
+        const {token} = userData ? JSON.parse(userData) : {};
+        
+        const config =
+        {
+            headers:
+            {
+                authorization: `Bearer ${token}`,
+            },
+        };
+        
+        const data = (await axios(`${API_URL}/user/${id}?apiKey=${API_KEY}`, config)).data;
         
         return dispatch({type: "GET_USERS", payload: data});
     };
@@ -52,7 +63,7 @@ export function getDir(path)
     return async function(dispatch)
     {
         const userData = window.localStorage.getItem("userData");
-        const token = userData ? JSON.parse(userData).token : null;
+        const {token, userId} = userData ? JSON.parse(userData) : {};
         
         const config =
         {
@@ -62,7 +73,7 @@ export function getDir(path)
             },
         };
         
-        const data = (await axios(`${API_URL}/dir/${path}?apiKey=${API_KEY}`, config)).data;
+        const data = (await axios(`${API_URL}/${userId}/dir/${path}?apiKey=${API_KEY}`, config)).data;
         
         return dispatch({type: "GET_DIR", payload: data});
     };
@@ -73,7 +84,7 @@ export function postDir(path, name)
     return async function(dispatch)
     {
         const userData = window.localStorage.getItem("userData");
-        const token = userData ? JSON.parse(userData).token : null;
+        const {token, userId} = userData ? JSON.parse(userData) : {};
         
         const values = {name}
         const config =
@@ -84,7 +95,7 @@ export function postDir(path, name)
             },
         };
         
-        const data = (await axios.post(`${API_URL}/dir/${path}?apiKey=${API_KEY}`, values, config)).data;
+        const data = (await axios.post(`${API_URL}/${userId}/dir/${path}?apiKey=${API_KEY}`, values, config)).data;
         
         return dispatch({type: "POST_DIR", payload: data});
     };
@@ -95,7 +106,7 @@ export function putDir(path, name)
     return async function(dispatch)
     {
         const userData = window.localStorage.getItem("userData");
-        const token = userData ? JSON.parse(userData).token : null;
+        const {token, userId} = userData ? JSON.parse(userData) : {};
         
         const values = {name}
         const config =
@@ -106,7 +117,7 @@ export function putDir(path, name)
             },
         };
         
-        const data = (await axios.put(`${API_URL}/dir/${path}?apiKey=${API_KEY}`, values, config)).data;
+        const data = (await axios.put(`${API_URL}/${userId}/dir/${path}?apiKey=${API_KEY}`, values, config)).data;
         
         return dispatch({type: "PUT_DIR", payload: data});
     };
@@ -117,7 +128,7 @@ export function deleteDir(path)
     return async function(dispatch)
     {
         const userData = window.localStorage.getItem("userData");
-        const token = userData ? JSON.parse(userData).token : null;
+        const {token, userId} = userData ? JSON.parse(userData) : {};
         
         const config =
         {
@@ -127,7 +138,7 @@ export function deleteDir(path)
             },
         };
         
-        const data = (await axios.delete(`${API_URL}/dir/${path}?apiKey=${API_KEY}`, config)).data;
+        const data = (await axios.delete(`${API_URL}/${userId}/dir/${path}?apiKey=${API_KEY}`, config)).data;
         
         return dispatch({type: "DELETE_DIR", payload: data});
     };
@@ -138,7 +149,7 @@ export function getFile(path)
     return async function(dispatch)
     {
         const userData = window.localStorage.getItem("userData");
-        const token = userData ? JSON.parse(userData).token : null;
+        const {token, userId} = userData ? JSON.parse(userData) : {};
         
         const config =
         {
@@ -149,7 +160,7 @@ export function getFile(path)
             responseType: "blob",
         };
         
-        const data = (await axios(`${API_URL}/file/${path}?apiKey=${API_KEY}`, config)).data;
+        const data = (await axios(`${API_URL}/${userId}/file/${path}?apiKey=${API_KEY}`, config)).data;
         
         return dispatch({type: "GET_FILE", payload: data});
     };
@@ -160,7 +171,7 @@ export function postFile(path, files)
     return async function(dispatch)
     {
         const userData = window.localStorage.getItem("userData");
-        const token = userData ? JSON.parse(userData).token : null;
+        const {token, userId} = userData ? JSON.parse(userData) : {};
         
         const config =
         {
@@ -176,7 +187,7 @@ export function postFile(path, files)
             formData.append(`file`, file);
         });
         
-        const data = (await axios.post(`${API_URL}/file/${path}?apiKey=${API_KEY}`, formData, config));
+        const data = (await axios.post(`${API_URL}/${userId}/file/${path}?apiKey=${API_KEY}`, formData, config));
         
         return dispatch({type: "POST_FILE", payload: data});
     };
@@ -187,7 +198,7 @@ export function putFile(path, name)
     return async function(dispatch)
     {
         const userData = window.localStorage.getItem("userData");
-        const token = userData ? JSON.parse(userData).token : null;
+        const {token, userId} = userData ? JSON.parse(userData) : {};
         
         const values = {name}
         const config =
@@ -198,7 +209,7 @@ export function putFile(path, name)
             },
         };
         
-        const data = (await axios.put(`${API_URL}/file/${path}?apiKey=${API_KEY}`, values, config)).data;
+        const data = (await axios.put(`${API_URL}/${userId}/file/${path}?apiKey=${API_KEY}`, values, config)).data;
         
         return dispatch({type: "PUT_FILE", payload: data});
     };
@@ -209,7 +220,7 @@ export function deleteFile(path)
     return async function(dispatch)
     {
         const userData = window.localStorage.getItem("userData");
-        const token = userData ? JSON.parse(userData).token : null;
+        const {token, userId} = userData ? JSON.parse(userData) : null;
         
         const config =
         {
@@ -219,8 +230,53 @@ export function deleteFile(path)
             },
         };
         
-        const data = (await axios.delete(`${API_URL}/file/${path}?apiKey=${API_KEY}`, config)).data;
+        const data = (await axios.delete(`${API_URL}/${userId}/file/${path}?apiKey=${API_KEY}`, config)).data;
         
         return dispatch({type: "DELETE_FILE", payload: data});
     };
+};
+
+export async function getThumbnail(path)
+{
+    const userData = window.localStorage.getItem("userData");
+    const {token, userId} = userData ? JSON.parse(userData) : {};
+    
+    const config =
+    {
+        headers:
+        {
+            authorization: `Bearer ${token}`,
+        },
+        responseType: "blob",
+    };
+    
+    const data = (await axios(`${API_URL}/${userId}/thumbnail/${path}?apiKey=${API_KEY}`, config)).data;
+    
+    return data;
+};
+
+export function cleanContentState()
+{
+    return async function(dispatch)
+    {
+        return dispatch({type: "CLEAN_CONTENT_STATE", payload: {}});
+    };
+};
+
+export async function restart()
+{
+    const userData = window.localStorage.getItem("userData");
+    const {token} = userData ? JSON.parse(userData) : {};
+    
+    const config =
+    {
+        headers:
+        {
+            authorization: `Bearer ${token}`,
+        },
+    };
+    
+    const data = (await axios.post(`${API_URL}/restart?apiKey=${API_KEY}`, {}, config)).data;
+    
+    return data;
 };

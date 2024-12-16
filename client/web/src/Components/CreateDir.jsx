@@ -6,10 +6,9 @@ import {FolderPlus} from "react-bootstrap-icons";
 // Files
 import {postDir} from "../redux/actions/actions";
 import CustomModal from "./CustomModal";
-// import styles from "./CreateDir.module.css";
 
 
-function CreateDir(props)
+export default function CreateDir(props)
 {
     const dispatch = useDispatch();
     const [input, setInput] = useState({name: ""});
@@ -45,8 +44,6 @@ function CreateDir(props)
             });
             
             if(error) return error;
-            
-            reload();
         };
     };
     
@@ -70,6 +67,3 @@ function CreateDir(props)
         </Container>
     );
 };
-
-
-export default CreateDir;

@@ -1,17 +1,20 @@
 // Dependencies
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {Card, Container, Row, Col, Button} from "react-bootstrap";
-import {FileEarmarkText, Folder, Folder2Open, Download, Pencil, Trash} from "react-bootstrap-icons";
+import {Download, Pencil, Trash} from "react-bootstrap-icons";
 import {saveAs} from "file-saver";
 // Files
 import {putDir, deleteDir, getFile, putFile, deleteFile} from "../redux/actions/actions";
+import {useLoading} from "../contexts/LoadingContext";
 import CustomModal from "./CustomModal";
+import DirentThumbnail from "./DirentThumbnail";
+import Loader from "./Loader";
 const host = process.env.REACT_APP_HOST;
 
 
-function Dirent(props)
+export default function Dirent(props)
 {
     const [actualWidth, setActualWidth] = useState(window.innerWidth);
     let dynamicWidth = actualWidth >= 768 ? 250 : "100%";
@@ -19,7 +22,7 @@ function Dirent(props)
     function handleResize()
     {
         setActualWidth(window.innerWidth);
-        window.removeEventListener('resize', handleResize);
+        window.removeEventListener("resize", handleResize);
     };
     
     window.addEventListener("resize", handleResize);
@@ -72,14 +75,17 @@ function DirentLink(props)
 
 function DirentCard(props)
 {
+    const {name, path, isDir, backDir, reload} = props;
+    
+    const {isLoading, showLoading, hideLoading} = useLoading();
+    
     const dispatch = useDispatch();
-    const [input, setInput] = useState({name: ""});
+    
+    const [input, setInput] = useState({name});
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState(null);
     
-    const {name, path, isDir, backDir, reload} = props;
-    const iconStyle = {size: 25};
-    const icon = backDir ? <Folder2Open {...iconStyle}/> : isDir ? <Folder {...iconStyle}/> : <FileEarmarkText {...iconStyle}/>
+    const thumbnailSize = 25;
     
     function handleShowModal(e, type)
     {
@@ -97,6 +103,7 @@ function DirentCard(props)
     async function handleDownload(e)
     {
         e.preventDefault();
+        showLoading("mouse");
         
         const filePath = path ? `${path}/${name}` : name;
         const data = await dispatch(getFile(filePath)).catch(e => console.log(e));
@@ -106,77 +113,88 @@ function DirentCard(props)
         {
             saveAs(file, name);
         };
+        
+        hideLoading("mouse");
     };
     
     async function handleEditName(e)
     {
         e.preventDefault();
         
+        let foundError = null;
+        
         if(input.name)
         {
             if(isDir)
             {
-                let error = null;
-                
                 const dirPath = path ? `${path}/${name}` : name;
-                await dispatch(putDir(dirPath, input.name)).catch(e => {
-                    error = true;
-                    console.log(e);
-                });
                 
-                if(error) return error;
-                
-                reload();
+                try
+                {
+                    await dispatch(putDir(dirPath, input.name));
+                }
+                catch(error)
+                {
+                    foundError = error.response?.data;
+                    console.log(foundError || error);
+                };
             }
             else
             {
-                let error = null;
-                
                 const filePath = path ? `${path}/${name}` : name;
-                await dispatch(putFile(filePath, input.name)).catch(e => {
-                    error = true;
-                    console.log(e);
-                });
                 
-                if(error) return error;
-                
-                reload();
+                try
+                {
+                    await dispatch(putFile(filePath, input.name));
+                }
+                catch(error)
+                {
+                    foundError = error.response?.data;
+                    console.log(foundError || error);
+                };
             };
         };
+        
+        return foundError;
     };
     
     async function handleDelete(e)
     {
         e.preventDefault();
         
+        let foundError = null;
+        
         if(isDir)
         {
-            let error = null;
             
             const dirPath = path ? `${path}/${name}` : name;
-            await dispatch(deleteDir(dirPath)).catch(e => {
-                error = true;
-                console.log(e);
-            });
             
-            if(error) return error;
-            
-            reload();
+            try
+            {
+                await dispatch(deleteDir(dirPath));
+            }
+            catch(error)
+            {
+                foundError = error.response?.data;
+                console.log(foundError || error);
+            };
         }
         else
         {
-            let error = null;
-            
             const filePath = path ? `${path}/${name}` : name;
-            await dispatch(deleteFile(filePath)).catch(e => {
-                error = true;
-                console.log(e);
-            });
             
-            if(error) return error;
-            
-            reload();
+            try
+            {
+                await dispatch(deleteFile(filePath));
+            }
+            catch(error)
+            {
+                foundError = error.response?.data;
+                console.log(foundError || error);
+            };
         };
+        
+        return foundError;
     };
     
     
@@ -194,7 +212,7 @@ function DirentCard(props)
                                 overflow: "hidden",
                                 whiteSpace: "nowrap",
                             }}>
-                                {icon} {name}
+                                <DirentThumbnail props={{name, path, isDir, backDir, size: thumbnailSize}} style={{margin: 2}}/> {name}
                             </Card.Text>
                         </Col>
                         
@@ -203,7 +221,14 @@ function DirentCard(props)
                                 backDir || isDir ? null
                                 :
                                 <Button className="p-0 mx-1" variant="outline" onClick={handleDownload}>
-                                    <Download size={20}/>
+                                    {
+                                        isLoading.mouse ? <Loader type="mouse"/>
+                                        :
+                                        <>
+                                            <Download size={20}/>
+                                            <Loader type=""/>
+                                        </>
+                                    }
                                 </Button>
                             }
                             
@@ -242,7 +267,3 @@ function DirentCard(props)
         </Card>
     );
 };
-
-
-
-export default Dirent;

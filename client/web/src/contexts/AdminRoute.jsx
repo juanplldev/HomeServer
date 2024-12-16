@@ -4,9 +4,9 @@ import {Navigate} from "react-router-dom";
 import {useAuth} from "./AuthContext";
 
 
-export default function PrivateRoute({children})
+export default function AdminRoute({children})
 {
     const {auth} = useAuth();
     
-    return auth?.isAuthenticated ? children : <Navigate to="/login" />;
+    return auth?.isAdmin ? children : <Navigate to="/" />;
 };

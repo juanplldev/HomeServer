@@ -2,13 +2,12 @@ const initialState =
 {
     path: "",
     content: {},
-    user: {},
     users: [],
     downloadFile: Blob,
 };
 
 
-function rootReducer(state = initialState, {type, payload})
+export default function rootReducer(state = initialState, {type, payload})
 {
     switch(type)
     {
@@ -16,7 +15,7 @@ function rootReducer(state = initialState, {type, payload})
             return {...state};
         
         case "LOGIN":
-            return {...state, user: payload.content};
+            return {...state};
         
         case "GET_USERS":
             return {...state, users: payload};
@@ -45,10 +44,10 @@ function rootReducer(state = initialState, {type, payload})
         case "DELETE_FILE":
             return {...state, path: payload.path, content: payload.content};
         
+        case "CLEAN_CONTENT_STATE":
+            return {...state, content: payload};
+        
         default:
             return {...state};
     };
 };
-
-
-export default rootReducer;

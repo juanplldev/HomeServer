@@ -8,7 +8,7 @@ import {getDir} from "../redux/actions/actions";
 import PathBreadcrumb from "./PathBreadcrumb.jsx";
 
 
-function PathBar(props)
+export default function PathBar(props)
 {
     const dispatch = useDispatch();
     const [input, setInput] = useState({path: ""});
@@ -96,12 +96,7 @@ function PathBar(props)
                         {validated.msg}
                     </Form.Control.Feedback>
                 </Form.Group>
-                
-                {/* <Button type="submit">Go</Button> */}
             </Form>
         </Container>
     );
 };
-
-
-export default PathBar;

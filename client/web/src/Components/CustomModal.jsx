@@ -3,13 +3,17 @@ import React, {useEffect, useState} from "react";
 import {Modal, Button, Form, Row, Col} from "react-bootstrap";
 import {X} from "react-bootstrap-icons";
 // Files
+import {useLoading} from "../contexts/LoadingContext";
+import Loader from "./Loader";
 
 
 function CustomModal(props)
 {
     const [validated, setValidated] = useState(true);
+    const [error, setError] = useState(null);
     const [isEmpty, setIsEmpty] = useState(true);
-    const {type="", input=[], name, showModal, handleCloseModal, submitAction, setInput} = props;
+    const {type="", input=[], name, showModal, handleCloseModal, submitAction, setInput, reload} = props;
+    const {isLoading, showLoading, hideLoading} = useLoading();
     
     useEffect(() => {
         if(Array.isArray(input))
@@ -40,12 +44,14 @@ function CustomModal(props)
     async function handleSubmit(e)
     {
         e.preventDefault();
+        showLoading("input");
         
         const submitError = await submitAction(e);
         
         if(submitError)
         {
             setValidated(false);
+            setError(submitError);
         }
         else
         {
@@ -53,6 +59,9 @@ function CustomModal(props)
             handleCloseModal();
             setInput({name: ""});
         };
+        
+        hideLoading("input");
+        await reload();
     };
     
     
@@ -80,13 +89,19 @@ function CustomModal(props)
                                 />
                                 
                                 <Form.Control.Feedback type="invalid">
-                                    Dirent name already exists.
+                                    {error && error.msg} Code: {error && error.error.code}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Form>
                     </Modal.Body>
                     
-                    <Button disabled={isEmpty} onClick={handleSubmit}>Save</Button>
+                    <Button disabled={isEmpty || isLoading.input} onClick={handleSubmit}>
+                        {
+                            isLoading.input ? <Loader type="input"/>
+                            :
+                            "Save"
+                        }
+                    </Button>
                 </Modal>
             </div>
         );
@@ -102,9 +117,19 @@ function CustomModal(props)
                     
                     <Modal.Body>
                         <p>Are you sure you want to delete this item?</p>
+                        
+                        <span hidden={error ? false : true} >
+                            {error && error.msg} Code: {error && error.error.code}
+                        </span>
                     </Modal.Body>
                     
-                    <Button variant="danger" onClick={submitAction}>Delete</Button>
+                    <Button variant="danger" onClick={handleSubmit}>
+                        {
+                            isLoading.input ? <Loader type="input"/>
+                            :
+                            "Delete"
+                        }
+                    </Button>
                 </Modal>
             </div>
         );
@@ -133,13 +158,19 @@ function CustomModal(props)
                                 />
                                 
                                 <Form.Control.Feedback type="invalid">
-                                    Dirent name already exists.
+                                    {error}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Form>
                     </Modal.Body>
                     
-                    <Button disabled={isEmpty} onClick={handleSubmit}>Create</Button>
+                    <Button disabled={isEmpty || isLoading.input} onClick={handleSubmit}>
+                        {
+                            isLoading.input ? <Loader type="input"/>
+                            :
+                            "Create"
+                        }
+                    </Button>
                 </Modal>
             </div>
         );
@@ -157,12 +188,12 @@ function CustomModal(props)
         
         return (
             <div onClick={e => e.preventDefault()}>
-                <Modal centered show={showModal} onHide={handleCloseModal}>
+                <Modal centered show={showModal} onHide={handleCloseModal} scrollable={true}>
                     <Modal.Header closeButton>
                         <Modal.Title>Upload files</Modal.Title>
                     </Modal.Header>
                     
-                    <Modal.Body className="d-flex flex-column align-items-start">
+                    <Modal.Body className="d-flex flex-column align-items-start" style={{maxHeight: 300}}>
                         {
                             input.map((file, index) => {
                                 return(
@@ -193,7 +224,13 @@ function CustomModal(props)
                         }
                     </Modal.Body>
                     
-                    <Button disabled={isEmpty} onClick={handleSubmit}>Upload</Button>
+                    <Button disabled={isEmpty || isLoading.input} onClick={handleSubmit}>
+                        {
+                            isLoading.input ? <Loader type="input"/>
+                            :
+                            "Upload"
+                        }
+                    </Button>
                 </Modal>
             </div>
         );

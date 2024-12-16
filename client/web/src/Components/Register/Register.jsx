@@ -5,24 +5,28 @@ import {useDispatch, useSelector} from "react-redux";
 import {Form, FloatingLabel, Button} from "react-bootstrap";
 // Files
 import {getUsers, register} from "../../redux/actions/actions";
-import AxiosErrorHandler from "../AxiosErrorHandler";
+import {useLoading} from "../../contexts/LoadingContext";
+import Loader from "../Loader";
 import styles from "./Register.module.css";
 
 
-function Register()
+export default function Register()
 {
+    const {isLoading, showLoading, hideLoading} = useLoading();
+    
     const dispatch = useDispatch();
-    const users = useSelector(state => state.users.content);
+    const users = useSelector(state => state.users);
+    
     const [input, setInput] = useState({
         userName: "",
         password: "",
         repeatPassword: "",
+        filesPath: "",
     });
     const [validated, setValidated] = useState({
         userName: true,
         repeatPassword: true,
     });
-    const [axiosError, setAxiosError] = useState(null);
     
     const navigate = useNavigate();
     
@@ -43,7 +47,9 @@ function Register()
     
     async function handleSubmit(e)
     {
-        const foundUsername = users.filter(e => e.userName === input.userName);
+        showLoading("input");
+        
+        const foundUsername = users.filter(e => e.username.toLowerCase() === input.userName.toLowerCase());
         const passwordCheck = input.password === input.repeatPassword;
         
         if(foundUsername.length)
@@ -63,21 +69,24 @@ function Register()
             try
             {
                 await dispatch(register(input));
+                
+                setInput({
+                    userName: "",
+                    password: "",
+                    repeatPassword: "",
+                });
+                setValidated(true);
+                navigate("/login");
             }
-            catch(error)
+            catch(e)
             {
-                setAxiosError(error.response?.data);
-                return;
+                const error = e.response?.data;
+                console.log(error);
             };
             
-            setInput({
-                userName: "",
-                password: "",
-                repeatPassword: "",
-            });
-            setValidated(true);
-            navigate("/login");
         };
+        
+        hideLoading("input");
     };
     
     
@@ -138,16 +147,28 @@ function Register()
                         </FloatingLabel>
                     </Form.Group>
                     
-                    <Button type="submit">Register</Button>
+                    <Form.Group>
+                        <FloatingLabel label="Files path">
+                            <Form.Control
+                                type="text"
+                                name="filesPath"
+                                placeholder="Files path"
+                                value={input.filesPath}
+                                onChange={handleChange}
+                                required
+                            />
+                        </FloatingLabel>
+                    </Form.Group>
+                    
+                    <Button type="submit">
+                        {
+                            isLoading.input ? <Loader type="input"/>
+                            :
+                            "Register"
+                        }
+                    </Button>
                 </Form>
-                
-                {
-                    axiosError && <AxiosErrorHandler error={axiosError}/>
-                }
             </div>
         </div>
     );
 };
-
-
-export default Register;

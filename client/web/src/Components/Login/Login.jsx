@@ -1,24 +1,26 @@
 // Dependencies
-import React, {useState, useContext} from "react";
+import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {useDispatch} from "react-redux";
 import {Form, FloatingLabel, Button} from "react-bootstrap";
 // Files
-import AuthContext from "../../contexts/AuthContext";
-import {login} from "../../redux/actions/actions";
+import {useAuth} from "../../contexts/AuthContext";
+import {useLoading} from "../../contexts/LoadingContext";
+import Loader from "../Loader";
 import styles from "./Login.module.css";
 
 
-function Login()
+export default function Login()
 {
-    const dispatch = useDispatch();
+    const {loginUser} = useAuth();
+    const {isLoading, showLoading, hideLoading} = useLoading();
+    
+    const navigate = useNavigate();
+    
+    const [validated, setValidated] = useState(true);
     const [input, setInput] = useState({
         userName: "",
         password: "",
     });
-    const [validated, setValidated] = useState(true);
-    const navigate = useNavigate();
-    const {/*authenticated*/ setAuthenticated} = useContext(AuthContext);
     
     function handleChange(e)
     {
@@ -30,28 +32,23 @@ function Login()
     {
         e.preventDefault();
         
-        const data = await dispatch(login(input)).catch(e => console.log(e));
+        showLoading("input");
         
-        if(!data)
+        const payload = await loginUser(input);
+        
+        hideLoading("input");
+        
+        if(!payload)
         {
             setValidated(false);
         }
         else
         {
-            const payload = data.payload;
-            const userData =
-            {
-                token: payload.content,
-            };
-            
-            window.localStorage.setItem("userData", JSON.stringify(userData));
-            
             setInput({
                 userName: "",
                 password: "",
             });
             setValidated(true);
-            setAuthenticated(true);
             navigate("/");
         };
     };
@@ -78,7 +75,7 @@ function Login()
                             />
                             
                             <Form.Control.Feedback type="invalid">
-                                Incorrect username.
+                                Invalid username.
                             </Form.Control.Feedback>
                         </FloatingLabel>
                         
@@ -97,17 +94,20 @@ function Login()
                             />
                             
                             <Form.Control.Feedback type="invalid">
-                                Incorrect password.
+                                Invalid password.
                             </Form.Control.Feedback>
                         </FloatingLabel>
                     </Form.Group>
                     
-                    <Button type="submit">Login</Button>
+                    <Button type="submit">
+                        {
+                            isLoading.input ? <Loader type="input"/>
+                            :
+                            "Login"
+                        }
+                    </Button>
                 </Form>
             </div>
         </div>
     );
 };
-
-
-export default Login;

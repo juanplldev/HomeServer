@@ -9,9 +9,10 @@ import {postFile} from "../redux/actions/actions";
 import CustomModal from "./CustomModal.jsx";
 
 
-function UploadFile(props)
+export default function UploadFile(props)
 {
     const dispatch = useDispatch();
+    
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState(null);
@@ -35,26 +36,28 @@ function UploadFile(props)
         setModalType(null);
     };
     
-    
-    
     async function handleUpload(e)
     {
         e.preventDefault();
         
+        let foundError = null;
+        
         if(uploadedFiles.length)
         {
-            let error = null;
-            
-            await dispatch(postFile(path, uploadedFiles)).catch(e => {
-                error = e.response.data;
-                console.log(e);
-            });
-            
-            if(error)
+            try
             {
-                error.forEach(e => {
-                    const {file} = e;
-                    const msg = e.error.message;
+                await dispatch(postFile(path, uploadedFiles));
+            }
+            catch(error)
+            {
+                foundError = error.response?.data;
+                console.log(foundError || error);
+            };
+            
+            if(Array.isArray(foundError))
+            {
+                foundError.forEach(e => {
+                    const {file, msg} = e;
                     
                     uploadedFiles.forEach(f => {
                         if(f.name === file)
@@ -64,14 +67,17 @@ function UploadFile(props)
                         }
                     });
                 });
-                
-                reload();
-                
-                return true;
+            }
+            else if(typeof foundError === "string")
+            {
+                uploadedFiles.forEach(f => {
+                    f.success = false;
+                    f.msg = foundError;
+                });
             };
-            
-            reload();
         };
+        
+        return foundError;
     };
     
     
@@ -81,9 +87,7 @@ function UploadFile(props)
                 <Card.Body {...getRootProps()} className="d-flex flex-column align-items-center justify-content-center">
                     <Card.Text>
                         <CloudArrowUp size={50}/>
-                    
-                    <input {...getInputProps()}/>
-                    
+                        <input {...getInputProps()}/>
                     </Card.Text>
                     <Card.Text>Drag and drop to upload files</Card.Text>
                     <Card.Text>OR</Card.Text>
@@ -103,6 +107,3 @@ function UploadFile(props)
         </Container>
     );
 };
-
-
-export default UploadFile;
