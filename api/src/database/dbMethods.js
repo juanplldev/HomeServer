@@ -1,5 +1,5 @@
 // Files
-const {models} = require("../db");
+const {models} = require("./db");
 
 
 async function getModel(Model, modelsToInclude)

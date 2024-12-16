@@ -2,7 +2,7 @@
 const {Router} = require("express");
 const router = Router();
 // Files
-const {getDir, postDir, putDir, deleteDir} = require("../controllers/dirMethods");
+const {getDir, postDir, putDir, deleteDir} = require("../controllers/dirController");
 const {isAuthenticated, isOwner} = require("../middlewares/localAuth");
 const {processPath} = require("../middlewares/processPath");
 
@@ -15,18 +15,19 @@ router.get("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async 
         
         const dirInfo = await getDir(userId, path);
         
-        if(!dirInfo.Error)
+        if(!dirInfo?.error)
         {
             res.status(200).send(dirInfo);
         }
         else
         {
-            res.status(404).send(dirInfo.Error);
+            res.status(404).send(dirInfo);
         };
     }
     catch(error)
     {
         console.error(error);
+        res.status(500).send("Server error.");
     };
 });
 
@@ -36,20 +37,21 @@ router.post("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async
     {
         const {userId, path} = req.params;
         
-        const newDir = await postDir(userId, path);
+        const foundError = await postDir(userId, path);
         
-        if(!newDir.Error)
+        if(!foundError)
         {
-            res.status(200).send(newDir);
+            res.status(200).send("Directory created successfully.");
         }
         else
         {
-            res.status(404).send(newDir.Error);
+            res.status(404).send(foundError);
         };
     }
     catch(error)
     {
         console.error(error);
+        res.status(500).send("Server error.");
     };
 });
 
@@ -60,20 +62,21 @@ router.put("/:userId/dir/:path*", isAuthenticated, isOwner, processPath, async (
         const {userId, path} = req.params;
         const {name} = req.body;
         
-        const updatedDir = await putDir(userId, path, name);
+        const foundError = await putDir(userId, path, name);
         
-        if(!updatedDir.Error)
+        if(!foundError)
         {
-            res.status(200).send(updatedDir);
+            res.status(200).send("Directory updated successfully.");
         }
         else
         {
-            res.status(404).send(updatedDir.Error);
+            res.status(404).send(foundError);
         };
     }
     catch(error)
     {
         console.error(error);
+        res.status(500).send("Server error.");
     };
 });
 
@@ -83,20 +86,21 @@ router.delete("/:userId/dir/:path*", isAuthenticated, isOwner, processPath, asyn
     {
         const {userId, path} = req.params;
         
-        const deletedDir = await deleteDir(userId, path);
+        const foundError = await deleteDir(userId, path);
         
-        if(!deletedDir.Error)
+        if(!foundError)
         {
             res.status(200).send("Directory deleted successfully.");
         }
         else
         {
-            res.status(404).send(deletedDir.Error);
+            res.status(404).send(foundError);
         };
     }
     catch(error)
     {
         console.error(error);
+        res.status(500).send("Server error.");
     };
 });
 

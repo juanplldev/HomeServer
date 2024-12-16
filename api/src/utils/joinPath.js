@@ -2,7 +2,7 @@
 require("dotenv").config();
 const path = require("path");
 // Files
-const {getUser} = require("./controllers/userMethods");
+const {getUser} = require("../controllers/userController");
 
 
 async function getUserRootPath(id)
@@ -17,7 +17,7 @@ async function joinRootPath(userId, dir, dirName="", fileExt="")
     
     if(!rootPath)
     {
-        console.error("Storage path not defined.", "Set files path on User database.");
+        console.error("Storage path not defined.", "Set files path on User database.", userId);
         process.exit(1);
     };
     
@@ -41,8 +41,24 @@ async function joinRootPath(userId, dir, dirName="", fileExt="")
     };
 };
 
+async function joinThumbnailPath(userId, filePath, fileName)
+{
+    const rootPath = await getUserRootPath(userId);
+    
+    let thumbnailName = filePath.split("/").join("_");
+    
+    if(fileName) thumbnailName = thumbnailName + "_" + path.parse(fileName).name + ".webp";
+    else thumbnailName = path.parse(thumbnailName).name + ".webp";
+    
+    const thumbnailsDir = path.join(rootPath, ".thumbnails");
+    const thumbnailPath = path.join(thumbnailsDir, thumbnailName);
+    
+    return {thumbnailsDir, thumbnailPath, thumbnailName};
+};
+
 
 module.exports = 
 {
     joinRootPath,
+    joinThumbnailPath,
 };

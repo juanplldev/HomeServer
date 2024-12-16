@@ -1,8 +1,7 @@
 // Dependencies
-const fs = require("fs");
 // Files
-const {User} = require("../db");
-const {getModel, getModelById, getModelByParam, postModel, putModel, deleteModel} = require("./dbMethods");
+const {User} = require("../database/db");
+const {getModel, getModelById, getModelByParam, postModel, putModel, deleteModel} = require("../database/dbMethods");
 const {hashPassword} = require("../services/bcrypt");
 
 

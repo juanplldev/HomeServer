@@ -1,5 +1,5 @@
 // Files
-const {getUser} = require("../controllers/userMethods");
+const {getUser} = require("../controllers/userController");
 const {signToken, readToken} = require("../services/jwt");
 const {API_KEY, JWT_SECRET} = process.env;
 

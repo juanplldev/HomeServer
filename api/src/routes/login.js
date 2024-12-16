@@ -2,10 +2,10 @@
 const {Router} = require("express");
 const router = Router();
 // Files
-const {User} = require("../db");
+const {User} = require("../database/db");
 const {authenticateUser, isAdmin} = require("../middlewares/localAuth");
 const {comparePassword} = require("../services/bcrypt");
-const {getModelByParam} = require("../controllers/dbMethods");
+const {getModelByParam} = require("../database/dbMethods");
 
 
 router.post("/login", async (req, res, next) => {

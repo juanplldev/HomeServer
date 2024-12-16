@@ -2,7 +2,7 @@
 const {Router} = require("express");
 const router = Router();
 // Files
-const {getUser, putUser, deleteUser} = require("../controllers/userMethods");
+const {getUser, putUser, deleteUser} = require("../controllers/userController");
 const {isAuthenticated, isAdmin, isOwner} = require("../middlewares/localAuth");
 
 // Get user info

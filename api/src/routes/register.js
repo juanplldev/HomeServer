@@ -2,7 +2,7 @@
 const {Router} = require("express");
 const router = Router();
 // Files
-const {postUser} = require("../controllers/userMethods");
+const {postUser} = require("../controllers/userController");
 const {isAdmin} = require("../middlewares/localAuth");
 
 
