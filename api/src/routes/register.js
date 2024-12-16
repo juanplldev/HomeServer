@@ -13,15 +13,15 @@ router.post("/register", isAdmin, async (req, res, next) => {
     {
         if(userName && password && filesPath)
         {
-            const newUser = await postUser({userName, password, filesPath});
+            const foundError = await postUser({userName, password, filesPath});
             
-            if(newUser)
+            if(!foundError)
             {
                 res.status(200).send("User created successfully.");
             }
             else
             {
-                res.status(404).send("Username not available.");
+                res.status(404).send(foundError);
             };
         }
         else
@@ -32,6 +32,7 @@ router.post("/register", isAdmin, async (req, res, next) => {
     catch(error)
     {
         console.error(error);
+        res.status(500).send("Server error.");
     };
 });
 

@@ -106,17 +106,17 @@ async function isAdmin(req, res, next)
             }
             else
             {
-                res.status(404).send("You must be an administrator to create new accounts.");
+                res.status(404).send("You must be an administrator to access here.");
             };
         }
         else
         {
-            res.status(404).send("You must be an administrator to create new accounts.");
+            res.status(404).send("You must be an administrator to access here.");
         };
     }
     else
     {
-        res.status(404).send("You must be an administrator to create new accounts.");
+        res.status(404).send("You must be an administrator to access here.");
     };
 };
 

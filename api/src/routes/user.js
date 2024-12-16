@@ -11,20 +11,21 @@ router.get("/user/:userId?", isAuthenticated, async (req, res, next) => {
     {
         const {userId} = req.params;
         
-        const foundUser = await getUser(userId);
+        const userInfo = await getUser(userId);
         
-        if(!foundUser.Error)
+        if(!userInfo?.error)
         {
-            res.status(200).send(foundUser);
+            res.status(200).send(userInfo);
         }
         else
         {
-            res.status(404).send(foundUser.Error);
+            res.status(404).send(userInfo);
         };
     }
     catch(error)
     {
         console.error(error);
+        res.status(500).send("Server error.");
     };
 });
 
@@ -37,15 +38,15 @@ router.put("/user/:userId", isAuthenticated, isOwner, async (req, res, next) => 
         
         if(content.userName && content.password)
         {
-            const updatedUser = await putUser(userId, content);
+            const foundError = await putUser(userId, content);
             
-            if(updatedUser)
+            if(!foundError)
             {
-                res.status(200).send(updatedUser);
+                res.status(200).send("User updated successfully.");
             }
             else
             {
-                res.status(404).send("Username already in use.");
+                res.status(404).send(foundError);
             };
         }
         else
@@ -56,6 +57,7 @@ router.put("/user/:userId", isAuthenticated, isOwner, async (req, res, next) => 
     catch(error)
     {
         console.error(error);
+        res.status(500).send("Server error.");
     };
 });
 
@@ -65,20 +67,21 @@ router.delete("/user/:userId", isAuthenticated, isAdmin, async (req, res, next) 
     {
         const {userId} = req.params;
         
-        const deletedUser = await deleteUser(userId);
+        const foundError = await deleteUser(userId);
         
-        if(!deletedUser.Error)
+        if(!foundError)
         {
             res.status(200).send("User deleted successfully.");
         }
         else
         {
-            res.status(404).send(deletedUser.Error);
+            res.status(404).send(foundError);
         };
     }
     catch(error)
     {
         console.error(error);
+        res.status(500).send("Server error.");
     };
 });
 

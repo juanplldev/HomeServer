@@ -4,10 +4,10 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
-const {isAuthorized} = require("./middlewares/localAuth.js");
+const {isAuthorized} = require("./src/middlewares/localAuth.js");
 // Files
-const {db} = require("./database/db.js");
-const routes = require("./routes/index.js");
+const {db} = require("./src/database/db.js");
+const routes = require("./src/routes/index.js");
 const {HOST="localhost", PORT=3000} = process.env;
 
 

@@ -40,7 +40,7 @@ router.post("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, asyn
         
         const rejectedFiles = await postFile(userId, path, file);
         
-        if(!rejectedFiles.length)
+        if(!rejectedFiles?.length)
         {
             res.status(200).send("File uploaded successfully.");
         }
