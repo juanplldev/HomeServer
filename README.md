@@ -2,7 +2,7 @@
 
 This is a home cloud project designed to run on a separate PC and be accessed over a local Wi-Fi network.
 
-> [!NOTE]
+> [!IMPORTANT]
 > This project is intended to run on a 64-bit Windows system.  
 > Its behavior on other operating systems has not been tested.
 
@@ -38,7 +38,7 @@ To ensure the project runs properly, you need to install the following software 
   Download version **14.15** for your Operating System [here](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads).
 
 - **[FFMPEG](https://www.ffmpeg.org/)** (Audio and video managment tool)  
-  Download the [source code](https://www.ffmpeg.org/download.html), extract it to your preferred location, and create an environment variable pointing to the ffmpeg `\bin` folder.  
+  Download the [source code](https://www.ffmpeg.org/download.html), extract it to your preferred location, and create an environment variable pointing to the ffmpeg `bin` folder.  
   ***Example:*** `C:\your-ffmpeg-path\bin`.
 
 - **[Canvas](https://github.com/Automattic/node-canvas/)** (Server-side implementation of the HTML5 Canvas API)  
@@ -49,12 +49,12 @@ To ensure the project runs properly, you need to install the following software 
     Search for version **16.11.42** and select **Build Tools**.  
     During installation, make sure to select the **Desktop development with C++** workload.
   2. **[Python 3.10.11](https://www.python.org/downloads/release/python-31011/):**  
-     - Scroll to the end and choose the **Windows Installer**.  
-     - During installation, select "Add python.exe to PATH".  
-     - Go to "Customize installation" and choose "Install Python 3.10 for all users".
+    Scroll to the end and choose the **Windows Installer**.  
+    During installation, select "Add python.exe to PATH".  
+    Go to "Customize installation" and choose "Install Python 3.10 for all users".
   3. **[GTK2](https://download.gnome.org/binaries/win64/gtk+/2.22/):**  
      Download the `gtk+-bundle` version **2.22.1**.  
-     Extract it and create an environment variable pointing to the `\bin` folder.  
+     Extract it and create an environment variable pointing to the `bin` folder.  
      ***Example:*** `C:\your-gtk-path\bin`.
   4. **[node-gyp](https://github.com/nodejs/node-gyp/#on-windows):**  
      Install it globally using your package manager:  
