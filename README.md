@@ -37,6 +37,9 @@ To ensure the project runs properly, you need to install the following software 
 - **[PostgreSQL](https://www.postgresql.org/)** (Database)  
   Download version **14.15** for your Operating System [here](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads).
 
+- **[Node.js](https://www.postgresql.org/)** (Runtime environment)  
+  Download version **20.xx** for your Operating System [here](https://nodejs.org/en/download/prebuilt-installer).
+
 - **[FFMPEG](https://www.ffmpeg.org/)** (Audio and video managment tool)  
   Download the [source code](https://www.ffmpeg.org/download.html), extract it to your preferred location, and create an environment variable pointing to the ffmpeg `bin` folder.  
   ***Example:*** `C:\your-ffmpeg-path\bin`.
