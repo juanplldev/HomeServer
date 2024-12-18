@@ -1,5 +1,5 @@
 // Dependencies
-const fs = require("fs");
+const fs = require("node:fs");
 // Files
 const {joinThumbnailPath} = require("../utils/joinPath");
 const {getMimeType} = require("../services/mime-type");
@@ -95,7 +95,7 @@ async function putThumbnail({userId, filePath, fileName, inputPath, modPath})
             return await postThumbnail({userId, filePath: modPath, fileName, inputPath});
         };
         
-        const {thumbnailsDir, thumbnailPath, thumbnailName} = await joinThumbnailPath(userId, modPath, fileName);
+        const {thumbnailsDir, thumbnailPath} = await joinThumbnailPath(userId, modPath, fileName);
         
         await verifyThumbnailsDir(thumbnailsDir);
         

@@ -1,6 +1,6 @@
 // Dependencies
-const fs = require("fs");
-const fsPath = require("path");
+const fs = require("node:fs");
+const fsPath = require("node:path");
 // Files
 const {joinRootPath} = require("../utils/joinPath");
 const {postThumbnail, putThumbnail, deleteThumbnail} = require("./thumbnailController");

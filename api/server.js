@@ -15,6 +15,7 @@ const server = express();
 
 // Middlewares
 server.use(morgan("dev"));
+// server.use(morgan("combined"));
 server.use(cors());
 server.use(bodyParser.urlencoded({extended: true}));
 server.use(bodyParser.json());
@@ -27,6 +28,5 @@ server.use("/", isAuthorized, routes);
 server.listen(PORT, HOST, () => {
   console.log(`Server is running on [${HOST}:${PORT}]`);
   db.sync({force: false})
-  .then(console.log("Tables done"))
-  // .catch(error => console.error(error));
+  .then(console.log("Database ready"));
 });

@@ -1,6 +1,6 @@
 // Dependencies
 require("dotenv").config();
-const fs = require("fs");
+const fs = require("node:fs");
 // Files
 const {joinRootPath} = require("../utils/joinPath");
 const {EXCLUDED_DIRENTS} = process.env;

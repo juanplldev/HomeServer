@@ -152,7 +152,7 @@ async function deleteUser(id)
     {
         const foundUser = await getModelById(User, id);
         
-        if(foundUser.Error) return "User not found."
+        if(foundUser.Error) return "User not found.";
         
         await deleteModel(User, id);
     }

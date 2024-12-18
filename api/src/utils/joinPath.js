@@ -1,6 +1,6 @@
 // Dependencies
 require("dotenv").config();
-const path = require("path");
+const path = require("node:path");
 // Files
 const {getUser} = require("../controllers/userController");
 
@@ -17,7 +17,7 @@ async function joinRootPath(userId, dir, dirName="", fileExt="")
     
     if(!rootPath)
     {
-        console.error("Storage path not defined.", "Set files path on User database.", userId);
+        console.error("User root files path not defined.", "Set files path on User database.", userId);
         process.exit(1);
     };
     

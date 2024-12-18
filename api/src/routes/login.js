@@ -3,7 +3,7 @@ const {Router} = require("express");
 const router = Router();
 // Files
 const {User} = require("../database/db");
-const {authenticateUser, isAdmin} = require("../middlewares/localAuth");
+const {authenticateUser} = require("../middlewares/localAuth");
 const {comparePassword} = require("../services/bcrypt");
 const {getModelByParam} = require("../database/dbMethods");
 

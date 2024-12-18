@@ -24,7 +24,7 @@ function generateVideoThumbnail({thumbnailsDir, inputPath, thumbnailName})
     {
         foundError =
         {
-            file: outputPath,
+            file: inputPath,
             msg: "Error generating video thumbnail.",
             error,
         };
