@@ -35,17 +35,17 @@ This is a home cloud project designed to run on a separate PC and be accessed ov
 To ensure the project runs properly, you need to install the following software on your PC beforehand. Otherwise, the project will fail to run.
 
 - **[PostgreSQL](https://www.postgresql.org/)** (Database)  
-  Download version **14.15** for your Operating System [here](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads).
+  Download version **14.15** for your OS [here](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads).
 
 - **[Node.js](https://www.postgresql.org/)** (Runtime environment)  
-  Download version **20.xx** for your Operating System [here](https://nodejs.org/en/download/prebuilt-installer).
+  Download version **20.xx** for your OS [here](https://nodejs.org/en/download/prebuilt-installer).
 
 - **[FFMPEG](https://www.ffmpeg.org/)** (Audio and video managment tool)  
   Download the [source code](https://www.ffmpeg.org/download.html), extract it to your preferred location, and create an environment variable pointing to the ffmpeg `bin` folder.  
   ***Example:*** `C:\your-ffmpeg-path\bin`.
 
 - **[Canvas](https://github.com/Automattic/node-canvas/)** (Server-side implementation of the HTML5 Canvas API)  
-  Canvas can be tricky to install, depending on your [Operating System](https://github.com/Automattic/node-canvas#installation).  
+  Canvas can be tricky to install, depending on your [OS](https://github.com/Automattic/node-canvas#installation).  
   For **[Windows](https://github.com/Automattic/node-canvas/wiki/Installation:-Windows)**, you need to install the following dependencies:
   
   1. **[Visual Studio 2019 Build Tools](https://learn.microsoft.com/en-us/visualstudio/releases/2019/history#release-dates-and-build-numbers):**  
