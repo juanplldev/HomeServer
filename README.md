@@ -35,13 +35,14 @@ This is a home cloud project designed to run on a separate PC and be accessed ov
 To ensure the project runs properly, you need to install the following software on your PC beforehand. Otherwise, the project will fail to run.
 
 - **[PostgreSQL](https://www.postgresql.org/)** (Database)  
-  Download version **14.15** for your OS [here](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads).
+  Download version **14.xx** for your OS [here](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads).
 
 - **[Node.js](https://www.postgresql.org/)** (Runtime environment)  
   Download version **20.xx** for your OS [here](https://nodejs.org/en/download/prebuilt-installer).
 
 - **[FFMPEG](https://www.ffmpeg.org/)** (Audio and video managment tool)  
-  Download the [source code](https://www.ffmpeg.org/download.html), extract it to your preferred location, and create an environment variable pointing to the ffmpeg `bin` folder.  
+  Download the compiled version for your OS [here](https://github.com/BtbN/FFmpeg-Builds/releases).  
+  Extract it to your preferred location, and create an environment variable pointing to the ffmpeg `bin` folder.  
   ***Example:*** `C:\your-ffmpeg-path\bin`.
 
 - **[Canvas](https://github.com/Automattic/node-canvas/)** (Server-side implementation of the HTML5 Canvas API)  
@@ -173,6 +174,10 @@ To create the first user, you need to **bypass the protection**:
 
 1. Navigate to `/api/src/routes/register.js` and **delete** the `isAdmin` middleware.
 2. Go to `/api/src/controllers/userController.js` and set `isAdmin: true` at line 76.
+3. Go to `client/web/src/contexts/AdminRoute.jsx` and **delete** the verification.
+4. Now, you can navigate to `/register` on the web.
+
+> 💡Remember revert the changes maded.
 
 > [!NOTE]  
 > When creating a user, you must provide a `filesPath`.  
