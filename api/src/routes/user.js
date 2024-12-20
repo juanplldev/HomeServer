@@ -6,7 +6,7 @@ const {getUser, putUser, deleteUser} = require("../controllers/userController");
 const {isAuthenticated, isAdmin, isOwner} = require("../middlewares/localAuth");
 
 // Get user info
-router.get("/user/:userId?", isAuthenticated, async (req, res, next) => {
+router.get("/user/:userId?", async (req, res, next) => {
     try
     {
         const {userId} = req.params;

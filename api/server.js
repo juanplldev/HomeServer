@@ -28,5 +28,9 @@ server.use("/", isAuthorized, routes);
 server.listen(PORT, HOST, () => {
   console.log(`Server is running on [${HOST}:${PORT}]`);
   db.sync({force: false})
-  .then(console.log("Database ready"));
+  .then(console.log("Database ready"))
+  .catch(error => {
+    console.error(error);
+    process.exit(1);
+  });
 });
