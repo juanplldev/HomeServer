@@ -78,20 +78,20 @@ Create a `.env` file in each project folder (`/api`, `/client/web`, `/client/mob
 
 - `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_URL`: Your PostgreSQL credentials.
 - `EXCLUDED_DIRENTS`: Directory entries you want to exclude, separated by commas. ***Example:*** `$RECYCLE.BIN, System Volume Information, .thumbnails`.
-- `HOST`: The host where the server will listen (default: `localhost`).
-- `PORT`: The port where the server will listen (default: `3000`).
+- `IP`: The IP where the server will listen. ***Example:*** `192.168.0.1`.
+- `PORT`: The port where the server will listen. ***Example:*** `3000`.
 - `API_KEY`: A custom API key for authentication.
 - `JWT_SECRET`: The secret key for JWT-based authentication.
 
 #### Web Client
 
-- `REACT_APP_API`: The server's URL and port. ***Example:*** `http://localhost:3000`.
-- `REACT_APP_HOST`: The client's URL (IP) and port. ***Example:*** `http://192.168.0.1:4000`.
+- `REACT_APP_API`: The server's URL. ***Example:*** `http://192.168.0.1:3000`.
+- `REACT_APP_HOST`: The client's URL. ***Example:*** `http://192.168.0.1:4000`.
 - `REACT_APP_API_KEY`: The same `API_KEY` used by the server.
 
 #### Mobile Client
 
-- `API`: The server's URL (IP) and port. ***Example:*** `http://192.168.0.1:3000`.
+- `API`: The server's URL. ***Example:*** `http://192.168.0.1:3000`.
 - `API_KEY`: The same `API_KEY` used by the server.
 - `API_TOKEN`: A signed token for the authenticated user.
 - `WIFI_IP`: The Wi-Fi IP address assigned to your phone. ***Example:*** `192.168.0.10`.

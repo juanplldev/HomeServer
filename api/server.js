@@ -8,14 +8,13 @@ const {isAuthorized} = require("./src/middlewares/localAuth.js");
 // Files
 const {db} = require("./src/database/db.js");
 const routes = require("./src/routes/index.js");
-const {HOST="localhost", PORT=3000} = process.env;
+const {IP, PORT} = process.env;
 
 
 const server = express();
 
 // Middlewares
 server.use(morgan("dev"));
-// server.use(morgan("combined"));
 server.use(cors());
 server.use(bodyParser.urlencoded({extended: true}));
 server.use(bodyParser.json());
@@ -25,8 +24,12 @@ server.use(fileUpload());
 server.use("/", isAuthorized, routes);
 
 // Server starter
-server.listen(PORT, HOST, () => {
-  console.log(`Server is running on [${HOST}:${PORT}]`);
+server.listen(PORT, IP, () => {
+  if(!PORT || !IP) {
+    console.error("Provide PORT and IP in .env file");
+    process.exit(1);
+  };
+  console.log(`Server is running on http://${IP}:${PORT}`);
   db.sync({force: false})
   .then(console.log("Database ready"))
   .catch(error => {
