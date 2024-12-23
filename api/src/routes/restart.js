@@ -11,7 +11,7 @@ router.post("/restart", isAdmin, async (req, res, next) => {
     {
         let response = "";
         
-        exec("pm2 restart home_server", (error, stdout, stderr) => {
+        exec("pm2 restart server", (error, stdout, stderr) => {
             response = error || stderr || stdout;
             
             if(error)
