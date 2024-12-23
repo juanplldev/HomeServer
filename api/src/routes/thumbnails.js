@@ -8,7 +8,7 @@ const {processPath} = require("../middlewares/processPath");
 
 
 // Get file
-router.get("/:userId/thumbnail/:path*?", isAuthenticated, isOwner, processPath, async (req, res, next) => {
+router.get("/:userId/thumbnail/:path*?", isAuthenticated, isOwner, processPath, async (req, res) => {
     try
     {
         const {userId, path} = req.params;

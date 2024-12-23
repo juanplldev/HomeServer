@@ -6,7 +6,7 @@ const {postUser} = require("../controllers/userController");
 const {isAdmin} = require("../middlewares/localAuth");
 
 
-router.post("/register", isAdmin, async (req, res, next) => {
+router.post("/register", isAdmin, async (req, res) => {
     const {userName, password, filesPath} = req.body;
     
     try

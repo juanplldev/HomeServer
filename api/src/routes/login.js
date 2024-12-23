@@ -8,7 +8,7 @@ const {comparePassword} = require("../services/bcrypt");
 const {getModelByParam} = require("../database/dbMethods");
 
 
-router.post("/login", async (req, res, next) => {
+router.post("/login", async (req, res) => {
     const {userName, password} = req.body;
     
     try

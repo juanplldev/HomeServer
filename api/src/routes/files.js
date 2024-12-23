@@ -8,7 +8,7 @@ const {processPath} = require("../middlewares/processPath");
 
 
 // Get file
-router.get("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, async (req, res, next) => {
+router.get("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, async (req, res) => {
     try
     {
         const {userId, path} = req.params;
@@ -32,7 +32,7 @@ router.get("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, async
 });
 
 // Post file
-router.post("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, async (req, res, next) => {
+router.post("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, async (req, res) => {
     try
     {
         const {userId, path} = req.params;
@@ -57,7 +57,7 @@ router.post("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, asyn
 });
 
 // Put file
-router.put("/:userId/file/:path*", isAuthenticated, isOwner, processPath, async (req, res, next) => {
+router.put("/:userId/file/:path*", isAuthenticated, isOwner, processPath, async (req, res) => {
     try
     {
         const {userId, path} = req.params;
@@ -82,7 +82,7 @@ router.put("/:userId/file/:path*", isAuthenticated, isOwner, processPath, async 
 });
 
 // Delete file
-router.delete("/:userId/file/:path*", isAuthenticated, isOwner, processPath, async (req, res, next) => {
+router.delete("/:userId/file/:path*", isAuthenticated, isOwner, processPath, async (req, res) => {
     try
     {
         const {userId, path} = req.params;

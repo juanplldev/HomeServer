@@ -8,7 +8,7 @@ const {processPath} = require("../middlewares/processPath");
 
 
 // Get directory
-router.get("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async (req, res, next) => {
+router.get("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async (req, res) => {
     try
     {
         const {userId, path} = req.params;
@@ -32,7 +32,7 @@ router.get("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async 
 });
 
 // Post directory
-router.post("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async (req, res, next) => {
+router.post("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async (req, res) => {
     try
     {
         const {userId, path} = req.params;
@@ -56,7 +56,7 @@ router.post("/:userId/dir/:path*?", isAuthenticated, isOwner, processPath, async
 });
 
 // Put directory
-router.put("/:userId/dir/:path*", isAuthenticated, isOwner, processPath, async (req, res, next) => {
+router.put("/:userId/dir/:path*", isAuthenticated, isOwner, processPath, async (req, res) => {
     try
     {
         const {userId, path} = req.params;
@@ -81,7 +81,7 @@ router.put("/:userId/dir/:path*", isAuthenticated, isOwner, processPath, async (
 });
 
 // Delete directory
-router.delete("/:userId/dir/:path*", isAuthenticated, isOwner, processPath, async (req, res, next) => {
+router.delete("/:userId/dir/:path*", isAuthenticated, isOwner, processPath, async (req, res) => {
     try
     {
         const {userId, path} = req.params;

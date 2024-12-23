@@ -6,7 +6,7 @@ const router = Router();
 const {isAdmin} = require("../middlewares/localAuth");
 
 
-router.post("/restart", isAdmin, async (req, res, next) => {
+router.post("/restart", isAdmin, async (req, res) => {
     try
     {
         let response = "";

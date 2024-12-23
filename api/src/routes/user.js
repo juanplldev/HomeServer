@@ -6,7 +6,7 @@ const {getUser, putUser, deleteUser} = require("../controllers/userController");
 const {isAuthenticated, isAdmin, isOwner} = require("../middlewares/localAuth");
 
 // Get user info
-router.get("/user/:userId?", async (req, res, next) => {
+router.get("/user/:userId?", async (req, res) => {
     try
     {
         const {userId} = req.params;
@@ -30,7 +30,7 @@ router.get("/user/:userId?", async (req, res, next) => {
 });
 
 // Put user info
-router.put("/user/:userId", isAuthenticated, isOwner, async (req, res, next) => {
+router.put("/user/:userId", isAuthenticated, isOwner, async (req, res) => {
     try
     {
         const {userId} = req.params;
@@ -62,7 +62,7 @@ router.put("/user/:userId", isAuthenticated, isOwner, async (req, res, next) => 
 });
 
 // Delete user
-router.delete("/user/:userId", isAuthenticated, isAdmin, async (req, res, next) => {
+router.delete("/user/:userId", isAuthenticated, isAdmin, async (req, res) => {
     try
     {
         const {userId} = req.params;
