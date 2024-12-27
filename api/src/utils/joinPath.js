@@ -7,8 +7,8 @@ const {getUser} = require("../controllers/userController");
 
 async function getUserRootPath(id)
 {
-    const {dataValues} = await getUser(id);
-    return dataValues.filesPath;
+    const response = await getUser(id);
+    return response.data?.dataValues?.filesPath;
 }
 
 async function joinRootPath(userId, dir, dirName="", fileExt="")

@@ -2,6 +2,7 @@
 const {Router} = require("express");
 const router = Router();
 // Files
+const api_response = require("../services/api_response");
 const {getThumbnail} = require("../controllers/thumbnailController");
 const {isAuthenticated, isOwner} = require("../middlewares/localAuth");
 const {processPath} = require("../middlewares/processPath");
@@ -13,21 +14,13 @@ router.get("/:userId/thumbnail/:path*?", isAuthenticated, isOwner, processPath, 
     {
         const {userId, path} = req.params;
         
-        const thumbnailInfo = await getThumbnail(userId, path);
-        
-        if(thumbnailInfo)
-        {
-            res.status(200).send(thumbnailInfo);
-        }
-        else
-        {
-            res.status(404).send(thumbnailInfo);
-        };
+        const response = await getThumbnail(userId, path);
+        return res.status(response.status).send(response.data ?? response);
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 

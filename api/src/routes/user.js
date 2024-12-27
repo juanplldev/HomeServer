@@ -2,6 +2,7 @@
 const {Router} = require("express");
 const router = Router();
 // Files
+const api_response = require("../services/api_response");
 const {getUser, putUser, deleteUser} = require("../controllers/userController");
 const {isAuthenticated, isAdmin, isOwner} = require("../middlewares/localAuth");
 
@@ -11,21 +12,13 @@ router.get("/user/:userId?", async (req, res) => {
     {
         const {userId} = req.params;
         
-        const userInfo = await getUser(userId);
-        
-        if(!userInfo?.error)
-        {
-            res.status(200).send(userInfo);
-        }
-        else
-        {
-            res.status(404).send(userInfo);
-        };
+        const response = await getUser(userId);
+        return res.status(response.status).send(response);
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 
@@ -38,26 +31,19 @@ router.put("/user/:userId", isAuthenticated, isOwner, async (req, res) => {
         
         if(content.userName && content.password)
         {
-            const foundError = await putUser(userId, content);
-            
-            if(!foundError)
-            {
-                res.status(200).send("User updated successfully.");
-            }
-            else
-            {
-                res.status(404).send(foundError);
-            };
+            const response = await putUser(userId, content);
+            return res.status(response.status).send(response);
         }
         else
         {
-            res.status(404).send("Provide username and password.");
+            const response = api_response.unauthorizedError("Provide username and password.");
+            return res.status(response.status).send(response);
         };
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 
@@ -67,21 +53,13 @@ router.delete("/user/:userId", isAuthenticated, isAdmin, async (req, res) => {
     {
         const {userId} = req.params;
         
-        const foundError = await deleteUser(userId);
-        
-        if(!foundError)
-        {
-            res.status(200).send("User deleted successfully.");
-        }
-        else
-        {
-            res.status(404).send(foundError);
-        };
+        const response = await deleteUser(userId);
+        return res.status(response.status).send(response);
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 

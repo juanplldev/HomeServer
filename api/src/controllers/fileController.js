@@ -2,15 +2,13 @@
 const fs = require("node:fs");
 const fsPath = require("node:path");
 // Files
+const api_response = require("../services/api_response");
 const {joinRootPath} = require("../utils/joinPath");
 const {postThumbnail, putThumbnail, deleteThumbnail} = require("./thumbnailController");
 
 
 async function getFile(userId, filePath)
 {
-    let foundError = null;
-    let fileInfo = {};
-    
     try
     {
         const {path} = await joinRootPath(userId, filePath);
@@ -18,107 +16,89 @@ async function getFile(userId, filePath)
         
         if(fs.existsSync(path))
         {
-            fileInfo =
+            const fileInfo =
             {
                 path,
                 name,
             };
+            
+            return api_response.success("File read successfully.", fileInfo);
         };
+        
+        return api_response.notFoundError("Error getting file: " + filePath);
     }
     catch(error)
     {
-        foundError =
-        {
-            file: filePath,
-            msg: "Error getting file.",
-            error,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error getting file: " + filePath, error));
+        return api_response.error("Error getting file: " + filePath, error);
     };
-    
-    return foundError || fileInfo;
 };
 
-async function postFile(userId, filePath, fileData)
+async function postFile(userId, filePath, file)
 {
-    if(fileData)
+    if(file)
     {
-        const rejectedFiles = [];
-        
         filePath = filePath || "rootDir";
         
-        if(!Array.isArray(fileData)) fileData = [fileData];
+        const {name, data} = file;
+        const fileExt = fsPath.extname(name);
         
-        for (const file of fileData)
+        const {path} = await joinRootPath(userId, filePath, name, fileExt);
+        
+        if(fs.existsSync(path))
         {
-            const {name, data} = file;
-            const fileExt = fsPath.extname(name);
-            
-            const {path} = await joinRootPath(userId, filePath, name, fileExt);
-            
-            if(fs.existsSync(path))
+            const thumbnailValues =
             {
-                rejectedFiles.push({
-                    file: name,
-                    msg: "File name already exists.",
-                });
-                const thumbnailValues =
-                {
-                    userId,
-                    filePath,
-                    fileName: name,
-                    inputPath: path,
-                };
+                userId,
+                filePath,
+                fileName: name,
+                inputPath: path,
+            };
+            
+            await postThumbnail(thumbnailValues);
+            
+            return api_response.error("File already exists.");
+        }
+        else
+        {
+            try
+            {
+                const writeStream = fs.createWriteStream(path);
                 
-                await postThumbnail(thumbnailValues);
+                writeStream.write(data);
+                writeStream.end();
+                
+                writeStream.on("finish", async () => {
+                    const thumbnailValues =
+                    {
+                        userId,
+                        filePath,
+                        fileName: name,
+                        inputPath: path,
+                    };
+                    
+                    await postThumbnail(thumbnailValues);
+                    
+                    writeStream.close();
+                });
+                
+                return api_response.created("File uploaded successfully.");
             }
-            else
+            catch(error)
             {
-                try
-                {
-                    const writeStream = fs.createWriteStream(path);
-                    
-                    writeStream.write(data);
-                    writeStream.end();
-                    
-                    writeStream.on("finish", async () => {
-                        const thumbnailValues =
-                        {
-                            userId,
-                            filePath,
-                            fileName: name,
-                            inputPath: path,
-                        };
-                        
-                        await postThumbnail(thumbnailValues);
-                        
-                        writeStream.close();
-                    });
-                }
-                catch(error)
-                {
-                    console.error("Error writing file:", name, error);
-                    
-                    rejectedFiles.push({
-                        file: name,
-                        msg: "Write fail.",
-                        error,
-                    });
-                };
+                console.error(api_response.error("Error uploading file: " + name, error));
+                return api_response.error("Error uploading file: " + name, error);
             };
         };
-        
-        return rejectedFiles;
     };
+    
+    return api_response.error("Provide file.");
 };
 
 async function putFile(userId, filePath, fileName)
 {
     if(filePath && fileName)
     {
-        let foundError = null;
-        
         try
         {
             const modPath = filePath.substring(0, filePath.lastIndexOf("/")) || "/";
@@ -145,27 +125,21 @@ async function putFile(userId, filePath, fileName)
             };
             
             await putThumbnail(thumbnailValues);
+            
+            return api_response.success("File updated successfully.");
         }
         catch(error)
         {
-            foundError =
-            {
-                file: fileName,
-                msg: "Error updating file.",
-                error,
-            };
-            
-            console.error(foundError);
+            console.error(api_response.error("Error updating file: " + fileName, error));
+            return api_response.error("Error updating file: " + fileName, error);
         };
-        
-        return foundError;
     };
+    
+    return api_response.error("Provide file path and file name.");
 };
 
 async function deleteFile(userId, filePath)
 {
-    let foundError = null;
-    
     try
     {
         const {path} = await joinRootPath(userId, filePath);
@@ -179,20 +153,14 @@ async function deleteFile(userId, filePath)
         };
         
         await deleteThumbnail(thumbnailValues);
+        
+        return api_response.success("File deleted successfully.");
     }
     catch(error)
     {
-        foundError =
-        {
-            file: filePath,
-            msg: "Error deleting file.",
-            error,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error deleting file: " + filePath, error));
+        return api_response.error("Error deleting file: " + filePath, error);
     };
-    
-    return foundError;
 };
 
 

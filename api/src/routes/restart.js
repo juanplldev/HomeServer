@@ -3,6 +3,7 @@ const {exec} = require("child_process");
 const {Router} = require("express");
 const router = Router();
 // Files
+const api_response = require("../services/api_response");
 const {isAdmin} = require("../middlewares/localAuth");
 
 
@@ -32,8 +33,8 @@ router.post("/restart", isAdmin, async (req, res) => {
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 

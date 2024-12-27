@@ -1,5 +1,6 @@
 // Dependencies
 // Files
+const api_response = require("../services/api_response");
 const {User} = require("../database/db");
 const {getModel, getModelById, getModelByParam, postModel, putModel, deleteModel} = require("../database/dbMethods");
 const {hashPassword} = require("../services/bcrypt");
@@ -7,11 +8,10 @@ const {hashPassword} = require("../services/bcrypt");
 
 async function getUser(id)
 {
-    let foundError = null;
-    let userInfo = {};
-    
     try
     {
+        let userInfo = {};
+        
         if(!id)
         {
             userInfo = await getModel(User);
@@ -23,27 +23,17 @@ async function getUser(id)
         
         if(userInfo.Error)
         {
-            foundError =
-            {
-                user: id,
-                msg: "Error getting user.",
-                error: userInfo.Error,
-            };
+            console.error(api_response.error("Error getting user: " + id, userInfo.Error));
+            return api_response.error("Error getting user: " + id, userInfo.Error);
         };
+        
+        return api_response.success("User read successfully.", userInfo);
     }
     catch(error)
     {
-        foundError =
-        {
-            user: id,
-            msg: "Error getting user.",
-            error,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error getting user: " + id, error));
+        return api_response.error("Error getting user: " + id, error);
     };
-    
-    return foundError || userInfo;
 };
 
 async function postUser({userName, password, filesPath})
@@ -60,13 +50,11 @@ async function postUser({userName, password, filesPath})
         modifiedUserName = splittedUserName[0].at(0).toUpperCase() + splittedUserName[0].slice(1) + " " + splittedUserName[1].at(0).toUpperCase() + splittedUserName[1].slice(1);
     };
     
-    let foundError = null;
-    
     try
     {
         const foundUser = await getModelByParam(User, "username", modifiedUserName, "one");
         
-        if(!foundUser.Error) return "Username not available.";
+        if(!foundUser.Error) return api_response.error("Error creating user: " + userName, "Username not available.");
         
         const hashedPassword = await hashPassword(password);
         const content =
@@ -79,20 +67,14 @@ async function postUser({userName, password, filesPath})
         };
         
         await postModel(User, content);
+        
+        return api_response.created("User created successfully.");
     }
     catch(error)
     {
-        foundError =
-        {
-            user: userName,
-            msg: "Error creating user.",
-            error,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error creating user: " + userName, error));
+        return api_response.error("Error creating user: " + userName, error);
     };
-    
-    return foundError;
 };
 
 async function putUser(id, {userName, password, filesPath, pathsToBackup})
@@ -109,13 +91,11 @@ async function putUser(id, {userName, password, filesPath, pathsToBackup})
         modifiedUserName = splittedUserName[0].at(0).toUpperCase() + splittedUserName[0].slice(1) + " " + splittedUserName[1].at(0).toUpperCase() + splittedUserName[1].slice(1);
     };
     
-    let foundError = null;
-    
     try
     {
         const foundUser = await getModelByParam(User, "username", modifiedUserName, "one");
         
-        if(!foundUser.Error && foundUser.dataValues?.id !== id) return "Username already in use.";
+        if(!foundUser.Error && foundUser.dataValues?.id !== id) return api_response.error("Error updating user: " + id, "Username already in use.");
         
         const hashedPassword = await hashPassword(password);
         const content =
@@ -128,47 +108,33 @@ async function putUser(id, {userName, password, filesPath, pathsToBackup})
         };
         
         await putModel(User, id, content);
+        
+        return api_response.success("User updated successfully.");
     }
     catch(error)
     {
-        foundError =
-        {
-            user: userName,
-            msg: "Error updating user.",
-            error,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error updating user: " + userName, error));
+        return api_response.error("Error updating user: " + userName, error);
     };
-    
-    return foundError;
 };
 
 async function deleteUser(id)
 {
-    let foundError = null;
-    
     try
     {
         const foundUser = await getModelById(User, id);
         
-        if(foundUser.Error) return "User not found.";
+        if(foundUser.Error) return api_response.error("Error deleting user: " + id, "User not found.");
         
         await deleteModel(User, id);
+        
+        return api_response.success("User deleted successfully.");
     }
     catch(error)
     {
-        foundError =
-        {
-            user: id,
-            msg: "Error deleting user.",
-            error,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error deleting user: " + id, error));
+        return api_response.error("Error deleting user: " + id, error);
     };
-    
-    return foundError;
 };
 
 

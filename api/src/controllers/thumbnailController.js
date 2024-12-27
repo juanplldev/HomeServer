@@ -1,6 +1,7 @@
 // Dependencies
 const fs = require("node:fs");
 // Files
+const api_response = require("../services/api_response");
 const {joinThumbnailPath} = require("../utils/joinPath");
 const {getMimeType} = require("../services/mime-type");
 const {generateImageThumbnail} = require("../services/sharp");
@@ -17,30 +18,25 @@ async function verifyThumbnailsDir(thumbnailsDir)
 
 async function getThumbnail(userId, filePath)
 {
-    let foundError = null;
-    let thumbnailInfo = {};
-    
     const {thumbnailsDir, thumbnailPath} = await joinThumbnailPath(userId, filePath);
     
     await verifyThumbnailsDir(thumbnailsDir);
     
-    try
+    if(fs.existsSync(thumbnailPath))
     {
-        if(fs.existsSync(thumbnailPath)) return await fs.promises.readFile(thumbnailPath);
-    }
-    catch(error)
-    {
-        foundError =
+        try
         {
-            file: thumbnailPath,
-            msg: "Error getting thumbnail.",
-            code: error.code,
+            const thumb = await fs.promises.readFile(thumbnailPath);
+            return api_response.success("Thumbnail read successfully.", thumb);
+        }
+        catch(error)
+        {
+            console.error(api_response.error("Error getting thumbnail: " + thumbnailPath, error));
+            return api_response.error("Error getting thumbnail: " + thumbnailPath, error);
         };
-        
-        console.error(foundError);
     };
     
-    return foundError || thumbnailInfo;
+    return api_response.notFoundError("Error getting thumbnail: " + thumbnailPath);
 };
 
 async function postThumbnail({userId, filePath, fileName, inputPath})
@@ -50,8 +46,6 @@ async function postThumbnail({userId, filePath, fileName, inputPath})
     await verifyThumbnailsDir(thumbnailsDir);
     
     const mimeType = getMimeType(inputPath);
-    
-    let foundError = null;
     
     try
     {
@@ -67,25 +61,19 @@ async function postThumbnail({userId, filePath, fileName, inputPath})
         {
             await generatePDFThumbnail(inputPath, thumbnailPath);
         };
+        
+        return api_response.created("Thumbnail created successfully.");
     }
     catch(error)
     {
-        foundError =
-        {
-            file: thumbnailPath,
-            msg: "Error generating thumbnail.",
-            code: error.code,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error creating thumbnail: " + thumbnailPath, error));
+        return api_response.error("Error creating thumbnail: " + thumbnailPath, error);
     };
 };
 
 async function putThumbnail({userId, filePath, fileName, inputPath, modPath})
 {
     const oldThumbnailPath = (await joinThumbnailPath(userId, filePath))?.thumbnailPath;
-    
-    let foundError = null;
     
     try
     {
@@ -100,17 +88,13 @@ async function putThumbnail({userId, filePath, fileName, inputPath, modPath})
         await verifyThumbnailsDir(thumbnailsDir);
         
         await fs.promises.rename(oldThumbnailPath, thumbnailPath);
+        
+        return api_response.success("Thumbnail updated successfully.");
     }
     catch(error)
     {
-        foundError =
-        {
-            file: oldThumbnailPath,
-            msg: "Error udpating thumbnail.",
-            code: error.code,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error updating thumbnail: " + oldThumbnailPath, error));
+        return api_response.error("Error updating thumbnail: " + oldThumbnailPath, error);
     };
 };
 
@@ -118,24 +102,18 @@ async function deleteThumbnail({userId, filePath})
 {
     const {thumbnailsDir, thumbnailPath} = await joinThumbnailPath(userId, filePath);
     
-    let foundError = null;
-    
     try
     {
         await verifyThumbnailsDir(thumbnailsDir);
         
         await fs.promises.unlink(thumbnailPath, {recursive: true});
+        
+        return api_response.success("Thumbnail deleted successfully.");
     }
     catch(error)
     {
-        foundError =
-        {
-            file: thumbnailPath,
-            msg: "Error deleting thumbnail.",
-            code: error.code,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error deleting thumbnail: " + thumbnailPath, error));
+        return api_response.error("Error deleting thumbnail: " + thumbnailPath, error);
     };
 };
 

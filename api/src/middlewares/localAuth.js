@@ -1,4 +1,5 @@
 // Files
+const api_response = require("../services/api_response");
 const {getUser} = require("../controllers/userController");
 const {signToken, readToken} = require("../services/jwt");
 const {API_KEY, JWT_SECRET} = process.env;
@@ -32,11 +33,11 @@ async function isAuthenticated(req, res, next)
         
         if(userId)
         {
-            const foundUser = await getUser(userId);
+            const response = await getUser(userId);
             
-            if(!foundUser.Error)
+            if(response.success)
             {
-                const userData = {id, userName, filesPath} = foundUser.dataValues;
+                const userData = {id, userName, filesPath} = response.data.dataValues;
                 
                 req.userData = userData;
                 
@@ -44,17 +45,20 @@ async function isAuthenticated(req, res, next)
             }
             else
             {
-                res.status(404).send("User not logged in.");
+                const response = api_response.unauthorizedError("User not logged in.");
+                return res.status(response.status).send(response);
             };
         }
         else
         {
-            res.status(404).send("Invalid token.");
+            const response = api_response.invalidTokenError("Invalid token.");
+            return res.status(response.status).send(response);
         };
     }
     else
     {
-        res.status(404).send("No authorization.");
+        const response = api_response.unauthorizedError("No authorization.");
+        return res.status(response.status).send(response);
     };
 };
 
@@ -68,22 +72,23 @@ async function isOwner(req, res, next)
     }
     else
     {
-        res.status(404).send("You must be the owner.");
+        const response = api_response.unauthorizedError("You must be the owner.");
+        return res.status(response.status).send(response);
     };
 };
 
 async function isAuthorized(req, res, next)
 {
-    const {apiKey} = req.query;
-    const validApiKey = apiKey === API_KEY ? true : false;
+    const apiKey = req.headers["x-api-key"];
     
-    if(validApiKey)
+    if(apiKey === API_KEY)
     {
         return next();
     }
     else
     {
-        res.status(404).send("No authorization. Invalid API key.");
+        const response = api_response.forbiddenError("Invalid API key.");
+        return res.status(response.status).send(response);
     };
 };
 
@@ -106,17 +111,20 @@ async function isAdmin(req, res, next)
             }
             else
             {
-                res.status(404).send("You must be an administrator to access here.");
+                const response = api_response.unauthorizedError("You must be an administrator.");
+                return res.status(response.status).send(response);
             };
         }
         else
         {
-            res.status(404).send("You must be an administrator to access here.");
+            const response = api_response.unauthorizedError("You must be an administrator.");
+            return res.status(response.status).send(response);
         };
     }
     else
     {
-        res.status(404).send("You must be an administrator to access here.");
+        const response = api_response.unauthorizedError("You must be an administrator.");
+        return res.status(response.status).send(response);
     };
 };
 

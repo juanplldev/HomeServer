@@ -2,6 +2,7 @@
 const {Router} = require("express");
 const router = Router();
 // Files
+const api_response = require("../services/api_response");
 const {postUser} = require("../controllers/userController");
 const {isAdmin} = require("../middlewares/localAuth");
 
@@ -13,26 +14,19 @@ router.post("/register", isAdmin, async (req, res) => {
     {
         if(userName && password && filesPath)
         {
-            const foundError = await postUser({userName, password, filesPath});
-            
-            if(!foundError)
-            {
-                res.status(200).send("User created successfully.");
-            }
-            else
-            {
-                res.status(404).send(foundError);
-            };
+            const response = await postUser({userName, password, filesPath});
+            return res.status(response.status).send(response);
         }
         else
         {
-            res.status(404).send("Username, password and files path required.");
+            const response = api_response.unauthorizedError("Username and password required.");
+            return res.status(response.status).send(response);
         };
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 

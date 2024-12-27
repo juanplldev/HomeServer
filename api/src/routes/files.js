@@ -5,6 +5,7 @@ const router = Router();
 const {getFile, postFile, putFile, deleteFile} = require("../controllers/fileController");
 const {isAuthenticated, isOwner} = require("../middlewares/localAuth");
 const {processPath} = require("../middlewares/processPath");
+const api_response = require("../services/api_response");
 
 
 // Get file
@@ -13,21 +14,23 @@ router.get("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, async
     {
         const {userId, path} = req.params;
         
-        const fileInfo = await getFile(userId, path);
+        const response = await getFile(userId, path);
         
-        if(!fileInfo?.error)
+        if(response.success)
         {
-            res.status(200).download(fileInfo.path, fileInfo.name);
+            const {path, name} = response.data;
+            
+            return res.status(response.status).download(path, name);
         }
         else
         {
-            res.status(404).send(fileInfo);
+            return res.status(response.status).send(response);
         };
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 
@@ -38,21 +41,13 @@ router.post("/:userId/file/:path*?", isAuthenticated, isOwner, processPath, asyn
         const {userId, path} = req.params;
         const file = req.files?.file;
         
-        const rejectedFiles = await postFile(userId, path, file);
-        
-        if(!rejectedFiles?.length)
-        {
-            res.status(200).send("File uploaded successfully.");
-        }
-        else
-        {
-            res.status(404).send(rejectedFiles);
-        };
+        const response = await postFile(userId, path, file);
+        return res.status(response.status).send(response);
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 
@@ -63,21 +58,13 @@ router.put("/:userId/file/:path*", isAuthenticated, isOwner, processPath, async 
         const {userId, path} = req.params;
         const {name} = req.body;
         
-        const foundError = await putFile(userId, path, name);
-        
-        if(!foundError)
-        {
-            res.status(200).send("File updated successfully.");
-        }
-        else
-        {
-            res.status(404).send(foundError);
-        };
+        const response = await putFile(userId, path, name);
+        return res.status(response.status).send(response);
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 
@@ -87,21 +74,13 @@ router.delete("/:userId/file/:path*", isAuthenticated, isOwner, processPath, asy
     {
         const {userId, path} = req.params;
         
-        const foundError = await deleteFile(userId, path);
-        
-        if(!foundError)
-        {
-            res.status(200).send("File deleted successfully.");
-        }
-        else
-        {
-            res.status(404).send(foundError);
-        };
+        const response = await deleteFile(userId, path);
+        return res.status(response.status).send(response);
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 

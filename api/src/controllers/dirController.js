@@ -2,15 +2,13 @@
 require("dotenv").config();
 const fs = require("node:fs");
 // Files
+const api_response = require("../services/api_response");
 const {joinRootPath} = require("../utils/joinPath");
 const {EXCLUDED_DIRENTS} = process.env;
 
 
 async function getDir(userId, dirName)
 {
-    let foundError = null;
-    let dirInfo = {};
-    
     try
     {
         const {path, clientPath} = await joinRootPath(userId, dirName);
@@ -42,61 +40,47 @@ async function getDir(userId, dirName)
         dirContent.directories.sort();
         dirContent.files.sort();
         
-        dirInfo =
+        const dirInfo =
         {
             path: clientPath,
             content: dirContent,
         };
+        
+        return api_response.success("Directory read successfully.", dirInfo);
     }
     catch(error)
     {
-        foundError =
-        {
-            dir: dirName,
-            msg: "Error getting directory.",
-            error,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error getting directory: /" + dirName, error));
+        return api_response.error("Error getting directory: /" + dirName, error);
     };
-    
-    return foundError || dirInfo;
 };
 
 async function postDir(userId, dirPath)
 {
     if(dirPath)
     {
-        let foundError = null;
-        
         try
         {
             const {path} = await joinRootPath(userId, dirPath);
             
             await fs.promises.mkdir(path);
+            
+            return api_response.created("Directory created successfully.");
         }
         catch(error)
         {
-            foundError =
-            {
-                dir: dirPath,
-                msg: "Error creating directory.",
-                error,
-            };
-            
-            console.error(foundError);
+            console.error(api_response.error("Error creating directory: /" + dirPath, error));
+            return api_response.error("Error creating directory: /" + dirPath, error);
         };
-        
-        return foundError;
     };
+    
+    return api_response.error("Provide directory path.");
 };
 
 async function putDir(userId, dirPath, dirName)
 {
-    if(!dirPath || !dirName)
+    if(dirPath && dirName)
     {
-        let foundError = null;
-        
         try
         {
             const modPath = dirPath.substring(0, dirPath.lastIndexOf("/")) || "rootDir";
@@ -104,46 +88,34 @@ async function putDir(userId, dirPath, dirName)
             const newPath = (await joinRootPath(userId, modPath, dirName))?.path;
             
             await fs.promises.rename(oldPath, newPath);
+            
+            return api_response.success("Directory updated successfully.");
         }
         catch(error)
         {
-            foundError =
-            {
-                dir: dirName,
-                msg: "Error updating directory.",
-                error,
-            };
-            
-            console.error(foundError);
+            console.error(api_response.error("Error updating directory: /" + dirName, error));
+            return api_response.error("Error updating directory: /" + dirName, error);
         };
-        
-        return foundError;
     };
+    
+    return api_response.error("Provide directory path and directory name.");
 };
 
 async function deleteDir(userId, dirPath)
 {
-    let foundError = null;
-    
     try
     {
         const {path} = await joinRootPath(userId, dirPath);
         
         await fs.promises.rmdir(path, {recursive: true});
+        
+        return api_response.success("Directory deleted successfully.");
     }
     catch(error)
     {
-        foundError =
-        {
-            dir: dirPath,
-            msg: "Error deleting directory.",
-            error,
-        };
-        
-        console.error(foundError);
+        console.error(api_response.error("Error deleting directory: /" + dirPath, error));
+        return api_response.error("Error deleting directory: /" + dirPath, error);
     };
-    
-    return foundError;
 };
 
 

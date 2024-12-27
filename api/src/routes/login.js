@@ -2,6 +2,7 @@
 const {Router} = require("express");
 const router = Router();
 // Files
+const api_response = require("../services/api_response");
 const {User} = require("../database/db");
 const {authenticateUser} = require("../middlewares/localAuth");
 const {comparePassword} = require("../services/bcrypt");
@@ -44,27 +45,29 @@ router.post("/login", async (req, res) => {
                         token,
                     };
                     
-                    res.status(200).send({msg: "User logged in.", content});
-                }
-                else
-                {
-                    res.status(404).send("Invalid username or password.");
+                    const response = api_response.success("User logged in.", content);
+                    return res.status(response.status).send(response);
                 };
+                
+                const response = api_response.unauthorizedError("Invalid username or password.");
+                return res.status(response.status).send(response);
             }
             else
             {
-                res.status(404).send("Invalid username or password.");
+                const response = api_response.unauthorizedError("Invalid username or password.");
+                return res.status(response.status).send(response);
             };
         }
         else
         {
-            res.status(404).send("Username and password required.");
+            const response = api_response.unauthorizedError("Username and password required.");
+            return res.status(response.status).send(response);
         };
     }
     catch(error)
     {
-        console.error(error);
-        res.status(500).send("Server error.");
+        const res_err = api_response.internalServerError(error);
+        return res.status(res_err.status).send(res_err);
     };
 });
 

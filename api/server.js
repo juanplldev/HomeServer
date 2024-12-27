@@ -14,6 +14,7 @@ const {IP, PORT} = process.env;
 const server = express();
 
 // Middlewares
+server.disable("x-powered-by");
 server.use(morgan("dev"));
 server.use(cors());
 server.use(bodyParser.urlencoded({extended: true}));
