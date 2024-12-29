@@ -1,14 +1,19 @@
 // Files
-const {models} = require("./db");
+const sequelize = require("./sequelize");
+
+const models = sequelize.models;
 
 
 async function getModel(Model, modelsToInclude)
 {
+    let response = {
+        model: null,
+        error: null,
+    };
+    
     if(Model)
     {
-        const modelName = Model.name;
-        
-        if(models[modelName])
+        if(models[Model.name])
         {
             try
             {
@@ -19,43 +24,40 @@ async function getModel(Model, modelsToInclude)
                     includedModels.push({model: e});
                 });
                 
-                const foundModel = await Model.findAll({
+                response.model = await Model.findAll({
                     include: includedModels,
                 });
-                
-                return foundModel;
             }
             catch(error)
             {
-                return {"Error": error};
+                response.error = error;
             };
         }
         else
         {
-            const error = "Provide a valid model.";
-            
-            return {"Error": error};
+            response.error = "Provide a valid model.";
         };
     }
     else
     {
-        const error = "Provide the model to be operated.";
-        
-        return {"Error": error};
+        response.error = "Provide the model to be operated.";
     };
+    
+    return response;
 };
 
 async function getModelById(Model, id, modelsToInclude)
 {
-    const typeOfId = "string";
+    let response = {
+        model: null,
+        error: null,
+    };
     
     if(Model)
     {
-        const modelName = Model.name;
-        
-        if(models[modelName])
+        if(models[Model.name])
         {
-            if(id && typeof id === typeOfId)
+            if(id && typeof id === "string")
             {
                 try
                 {
@@ -66,58 +68,45 @@ async function getModelById(Model, id, modelsToInclude)
                         includedModels.push({model: e});
                     });
                     
-                    const foundModel = await Model.findByPk(id, {
+                    response.model = await Model.findByPk(id, {
                         include: includedModels,
-                    }).catch(() => {
-                        const error = "Provide a UUIDV4.";
-                        return {"Error": error};
                     });
                     
-                    if(foundModel)
-                    {
-                        return foundModel;
-                    }
-                    else
-                    {
-                        const error = "Id not found.";
-                        
-                        return {"Error": error};
-                    };
+                    response.error = !response.model && "Id not found.";
                 }
                 catch(error)
                 {
-                    return {"Error": error};
+                    response.error = error;
                 };
             }
             else
             {
-                const error = "Provide a UUIDV4.";
-                
-                return {"Error": error};
+                response.error = "Provide a UUIDV4.";
             };
         }
         else
         {
-            const error = "Provide a valid model.";
-            
-            return {"Error": error};
+            response.error = "Provide a valid model.";
         };
     }
     else
     {
-        const error = "Provide the model to be operated.";
-        
-        return {"Error": error};
+        response.error = "Provide the model to be operated.";
     };
+    
+    return response;
 };
 
 async function getModelByParam(Model, whereParam, whereContent, find, modelsToInclude)
 {
+    let response = {
+        model: null,
+        error: null,
+    };
+    
     if(Model)
     {
-        const modelName = Model.name;
-        
-        if(models[modelName])
+        if(models[Model.name])
         {
             if(whereParam && whereContent)
             {
@@ -132,84 +121,67 @@ async function getModelByParam(Model, whereParam, whereContent, find, modelsToIn
                     
                     if(find === "one")
                     {
-                        const foundModel = await Model.findOne({
+                        response.model = await Model.findOne({
                             where:
                             {
                                 [whereParam]: whereContent,
                             },
                             include: includedModels,
-                        }).catch(() => {
-                            const error = "Provide a valid param.";
-                            return {"Error": error};
                         });
                         
-                        if(foundModel)
-                        {
-                            return foundModel;
-                        }
-                        else
-                        {
-                            const error = "Param not found.";
-                            
-                            return {"Error": error};
-                        };
+                        
+                        response.error = !response.model && "Param not found.";
                     }
                     else if(find === "all")
                     {
-                        const foundModel = await Model.findAll({
+                        response.model = await Model.findAll({
                             where:
                             {
                                 [whereParam]: whereContent,
                             },
                             include: includedModels,
-                        }).catch(() => {
-                            const error = "Provide a valid param.";
-                            return {"Error": error};
                         });
                         
-                        return foundModel;
+                        response.error = !response.model && "Param not found.";
                     }
                     else
                     {
-                        const error = "Provide the find function.";
-                        
-                        return {"Error": error};
+                        response.error = "Provide the find param.";
                     };
                 }
                 catch(error)
                 {
-                    return {"Error": error};
+                    response.error = error;
                 };
             }
             else
             {
-                const error = "Provide a where param and its content.";
-                
-                return {"Error": error};
+                response.error = "Provide a where param and its content.";
             };
         }
         else
         {
-            const error = "Provide a valid model.";
-            
-            return {"Error": error};
+            response.error = "Provide a valid model.";
         };
     }
     else
     {
-        const error = "Provide the model to be operated.";
-        
-        return {"Error": error};
+        response.error = "Provide the model to be operated.";
     };
+    
+    return response;
 };
 
 async function getModelByParams(Model, whereObject, find, modelsToInclude)
 {
+    let response = {
+        model: null,
+        error: null,
+    };
+    
     if(Model)
     {
-        const modelName = Model.name;
-        
-        if(models[modelName])
+        if(models[Model.name])
         {
             if(typeof whereObject === "object")
             {
@@ -224,214 +196,185 @@ async function getModelByParams(Model, whereObject, find, modelsToInclude)
                     
                     if(find === "one")
                     {
-                        const foundModel = await Model.findOne({
+                        response.model = await Model.findOne({
                             where: whereObject,
                             include: includedModels,
-                        }).catch(() => {
-                            const error = "Provide a valid param.";
-                            return {"Error": error};
                         });
                         
-                        if(foundModel)
-                        {
-                            return foundModel;
-                        }
-                        else
-                        {
-                            const error = "Param not found.";
-                            
-                            return {"Error": error};
-                        };
+                        response.error = !response.model && "Param not found.";
                     }
                     else if(find === "all")
                     {
-                        const foundModel = await Model.findAll({
+                        response.model = await Model.findAll({
                             where: whereObject,
                             include: includedModels,
-                        }).catch(() => {
-                            const error = "Provide a valid param.";
-                            return {"Error": error};
                         });
                         
-                        return foundModel;
+                        response.error = !response.model && "Param not found.";
                     }
                     else
                     {
-                        const error = "Provide the find function.";
-                        
-                        return {"Error": error};
+                        response.error = "Provide the find param.";
                     };
                 }
                 catch(error)
                 {
-                    return {"Error": error};
+                    response.error = error;
                 };
             }
             else
             {
-                const error = "Provide a where object.";
-                
-                return {"Error": error};
+                response.error = "Provide a where object.";
             };
         }
         else
         {
-            const error = "Provide a valid model.";
-            
-            return {"Error": error};
+            response.error = "Provide a valid model.";
         };
     }
     else
     {
-        const error = "Provide the model to be operated.";
-        
-        return {"Error": error};
+        response.error = "Provide the model to be operated.";
     };
+    
+    return response;
 };
 
 async function postModel(Model, content)
 {
+    let response = {
+        model: null,
+        error: null,
+    };
+    
     if(Model && content)
     {
-        const modelName = Model.name;
-        
-        if(models[modelName])
+        if(models[Model.name])
         {
             try
             {
                 if(typeof content === "object")
                 {
-                    const newModel = await Model.create(content).catch(() => {
-                        const error = "Some key or value was rejected.";
-                        return {"Error": error};
-                    });
+                    response.model = await Model.create(content);
                     
-                    return newModel;
+                    response.error = !response.model && "Failed to create model.";
                 }
                 else
                 {
-                    const error = "Provide an object with the content to be saved.";
-                    
-                    return {"Error": error};
+                    response.error = "Provide an object with the content to be saved.";
                 };
             }
             catch(error)
             {
-                return {"Error": error};
+                response.error = error;
             };
         }
         else
         {
-            const error = "Provide a valid model.";
-            
-            return {"Error": error};
+            response.error = "Provide a valid model.";
         };
     }
     else
     {
-        const error = "Provide the model to be operated and its content.";
-        
-        return {"Error": error};
+        response.error = "Provide the model to be operated and its content.";
     };
+    
+    return response;
 };
 
 async function putModel(Model, id, content)
 {
+    let response = {
+        model: null,
+        error: null,
+    };
+    
     if(Model && id)
     {
-        const modelName = Model.name;
-        
-        if(models[modelName])
+        if(models[Model.name])
         {
             try
             {
                 const foundModel = await getModelById(Model, id);
                 
-                if(!foundModel.Error)
+                if(!foundModel.error)
                 {
                     if(typeof content === "object")
                     {
-                        const updatedModel = await foundModel.update(content).catch(() => {
-                            const error = "Some key or value was rejected.";
-                            return {"Error": error};
-                        });
+                        response.model = await foundModel.update(content);
                         
-                        return updatedModel;
+                        response.error = !response.model && "Failed to update model.";
                     }
                     else
                     {
-                        const error = "Provide an object with the content to be saved.";
-                        
-                        return {"Error": error};
+                        response.error = "Provide an object with the content to be saved.";
                     };
                 }
                 else
                 {
-                    return {"Error": foundModel.Error};
+                    response.error = foundModel.error;
                 };
             }
             catch(error)
             {
-                return {"Error": error};
+                response.error = error;
             };
         }
         else
         {
-            const error = "Provide a valid model.";
-            
-            return {"Error": error};
+            response.error = "Provide a valid model.";
         };
     }
     else
     {
-        const error = "Provide the model to be operated and the id to be updated.";
-        
-        return {"Error": error};
+        response.error = "Provide the model to be operated and the id to be updated.";
     };
+    
+    return response;
 };
 
 async function deleteModel(Model, id)
 {
+    let response = {
+        model: null,
+        error: null,
+    };
+    
     if(Model && id)
     {
-        const modelName = Model.name;
-        
-        if(models[modelName])
+        if(models[Model.name])
         {
             try
             {
                 const foundModel = await getModelById(Model, id);
                 
-                if(!foundModel.Error)
+                if(!foundModel.error)
                 {
+                    response.model = await foundModel.destroy();
                     
-                    const deletedModel = await foundModel.destroy();
-                    
-                    return deletedModel;
+                    response.error = !response.model && "Failed to delete model.";
                 }
                 else
                 {
-                    return {"Error": foundModel.Error};
+                    response.error = foundModel.error;
                 };
             }
             catch(error)
             {
-                return {"Error": error};
+                response.error = error;
             };
         }
         else
         {
-            const error = "Provide a valid model.";
-            
-            return {"Error": error};
+            response.error = "Provide a valid model.";
         };
     }
     else
     {
-        const error = "Provide the model to be operated and the id to be deleted.";
-        
-        return {"Error": error};
+        response.error = "Provide the model to be operated and the id to be deleted.";
     };
+    
+    return response;
 };
 
 module.exports =

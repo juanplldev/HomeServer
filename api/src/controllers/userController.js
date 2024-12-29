@@ -1,7 +1,6 @@
-// Dependencies
 // Files
+const User = require("../database/models/User");
 const api_response = require("../services/api_response");
-const {User} = require("../database/db");
 const {getModel, getModelById, getModelByParam, postModel, putModel, deleteModel} = require("../database/dbMethods");
 const {hashPassword} = require("../services/bcrypt");
 
@@ -12,22 +11,16 @@ async function getUser(id)
     {
         let userInfo = {};
         
-        if(!id)
+        if(!id) userInfo = await getModel(User);
+        else userInfo = await getModelById(User, id);
+        
+        if(userInfo.error)
         {
-            userInfo = await getModel(User);
-        }
-        else
-        {
-            userInfo = await getModelById(User, id);
+            console.error(api_response.error("Error getting user: " + id, userInfo.error));
+            return api_response.error("Error getting user: " + id, userInfo.error);
         };
         
-        if(userInfo.Error)
-        {
-            console.error(api_response.error("Error getting user: " + id, userInfo.Error));
-            return api_response.error("Error getting user: " + id, userInfo.Error);
-        };
-        
-        return api_response.success("User read successfully.", userInfo);
+        return api_response.success("User read successfully.", userInfo.model);
     }
     catch(error)
     {
@@ -54,7 +47,7 @@ async function postUser({userName, password, filesPath})
     {
         const foundUser = await getModelByParam(User, "username", modifiedUserName, "one");
         
-        if(!foundUser.Error) return api_response.error("Error creating user: " + userName, "Username not available.");
+        if(foundUser.error) return api_response.error("Error creating user: " + userName, "Username not available.");
         
         const hashedPassword = await hashPassword(password);
         const content =
@@ -95,7 +88,7 @@ async function putUser(id, {userName, password, filesPath, pathsToBackup})
     {
         const foundUser = await getModelByParam(User, "username", modifiedUserName, "one");
         
-        if(!foundUser.Error && foundUser.dataValues?.id !== id) return api_response.error("Error updating user: " + id, "Username already in use.");
+        if(foundUser.error || foundUser.model.dataValues?.id !== id) return api_response.error("Error updating user: " + id, "Username already in use.");
         
         const hashedPassword = await hashPassword(password);
         const content =
@@ -124,7 +117,7 @@ async function deleteUser(id)
     {
         const foundUser = await getModelById(User, id);
         
-        if(foundUser.Error) return api_response.error("Error deleting user: " + id, "User not found.");
+        if(foundUser.error) return api_response.error("Error deleting user: " + id, "User not found.");
         
         await deleteModel(User, id);
         

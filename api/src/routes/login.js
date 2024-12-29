@@ -2,8 +2,8 @@
 const {Router} = require("express");
 const router = Router();
 // Files
+const User = require("../database/models/User");
 const api_response = require("../services/api_response");
-const {User} = require("../database/db");
 const {authenticateUser} = require("../middlewares/localAuth");
 const {comparePassword} = require("../services/bcrypt");
 const {getModelByParam} = require("../database/dbMethods");
@@ -30,18 +30,18 @@ router.post("/login", async (req, res) => {
             
             const foundUser = await getModelByParam(User, "username", modifiedUserName, "one");
             
-            if(!foundUser.Error)
+            if(!foundUser.error)
             {
-                const foundPassword = foundUser.dataValues.password;
+                const foundPassword = foundUser.model.dataValues.password;
                 const checkPassword = await comparePassword(password, foundPassword);
                 
                 if(checkPassword)
                 {
-                    const token = await authenticateUser(foundUser.dataValues);
+                    const token = await authenticateUser(foundUser.model.dataValues);
                     const content =
                     {
-                        userId: foundUser.dataValues.id,
-                        isAdmin: foundUser.dataValues.isAdmin,
+                        userId: foundUser.model.dataValues.id,
+                        isAdmin: foundUser.model.dataValues.isAdmin,
                         token,
                     };
                     
