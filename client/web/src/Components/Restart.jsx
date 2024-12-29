@@ -3,20 +3,22 @@ import React from "react";
 import {Col} from "react-bootstrap";
 import {ArrowRepeat} from "react-bootstrap-icons";
 // Files
-import {restart} from "../redux/actions/actions";
-import {useAuth} from "../contexts/AuthContext.jsx";
+import {useAuthStore, useAppStore} from "../store/store";
 
 
 export default function Restart()
 {
-    const {auth} = useAuth();
+    const restart = useAuthStore(state => state.restart);
+    const isAdmin = useAppStore(state => state.isAdmin);
     
     async function handleRestart()
     {
-        return await restart();
+        const payload = await restart();
+        
+        console.log(payload);
     };
     
-    return auth.isAdmin && (
+    return isAdmin && (
         <Col style={{height: 50, width: 50, position: "absolute", top: 50, right: 23}} className="d-flex align-items-center jusify-content-center">
             <ArrowRepeat style={{scale: "2", opacity: 0.9}} cursor="pointer" onClick={handleRestart}/>
         </Col>

@@ -1,20 +1,20 @@
 // Dependencies
 import React, {useState} from "react";
-import {useDispatch} from "react-redux";
 import {Button, Container} from "react-bootstrap";
 import {FolderPlus} from "react-bootstrap-icons";
 // Files
-import {postDir} from "../redux/actions/actions";
-import CustomModal from "./CustomModal";
+import {useAppStore} from "../store/store.js";
+import CustomModal from "./CustomModal.jsx";
 
 
-export default function CreateDir(props)
+export default function CreateDir()
 {
-    const dispatch = useDispatch();
+    const {getPath, postDir} = useAppStore();
+    const path = getPath();
+    
     const [input, setInput] = useState({name: ""});
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState(null);
-    const {path, reload} = props;
     
     function handleShowModal(e, type)
     {
@@ -35,15 +35,9 @@ export default function CreateDir(props)
         
         if(input.name)
         {
-            let error = null;
-            
             const dirPath = path ? `${path}/${input.name}` : input.name;
-            await dispatch(postDir(dirPath, input.name)).catch(e => {
-                error = true;
-                console.log(e);
-            });
             
-            if(error) return error;
+            return await postDir(dirPath, input.name);
         };
     };
     
@@ -61,7 +55,6 @@ export default function CreateDir(props)
                 showModal={showModal}
                 handleCloseModal={handleCloseModal}
                 submitAction={handleCreate}
-                reload={reload}
                 setInput={setInput}
             />
         </Container>

@@ -3,14 +3,16 @@ import React from "react";
 import {useNavigate} from "react-router-dom";
 import {Container, Breadcrumb} from "react-bootstrap";
 // Files
+import {useAppStore} from "../store/store.js";
 
 
-export default function PathBreadcrumb(props)
+export default function PathBreadcrumb()
 {
-    const navigate = useNavigate();
-    const {path} = props;
-    const subPaths = path ? path.split("/") : [];
+    const {path} = useAppStore();
     
+    const navigate = useNavigate();
+    
+    const subPaths = path ? path.split("/") : [];
     subPaths.unshift("Home");
     
     return (

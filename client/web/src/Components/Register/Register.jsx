@@ -1,21 +1,17 @@
 // Dependencies
 import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
 import {Form, FloatingLabel, Button} from "react-bootstrap";
 // Files
-import {getUsers, register} from "../../redux/actions/actions";
-import {useLoading} from "../../contexts/LoadingContext";
-import Loader from "../Loader";
+import {useAuthStore, useLoadingStore} from "../../store/store.js";
+import Loader from "../Loader.jsx";
 import styles from "./Register.module.css";
 
 
 export default function Register()
 {
-    const {isLoading, showLoading, hideLoading} = useLoading();
-    
-    const dispatch = useDispatch();
-    const users = useSelector(state => state.users);
+    const {users, getUsers, register} = useAuthStore();
+    const {isLoading, setLoading} = useLoadingStore();
     
     const [input, setInput] = useState({
         userName: "",
@@ -23,9 +19,11 @@ export default function Register()
         repeatPassword: "",
         filesPath: "",
     });
-    const [validated, setValidated] = useState({
+    const [validation, setValidation] = useState({
         userName: true,
+        password: true,
         repeatPassword: true,
+        msg: "",
     });
     
     const navigate = useNavigate();
@@ -33,60 +31,56 @@ export default function Register()
     useEffect(() => {
         async function fetchData()
         {
-            await dispatch(getUsers());
+            await getUsers();
         };
         fetchData();
-    }, [dispatch]);
+    }, []);
     
     
     function handleChange(e)
     {
         setInput({...input, [e.target.name] : e.target.value});
-        setValidated({...validated, [e.target.name] : true});
+        setValidation({...validation, [e.target.name] : true});
     };
     
     async function handleSubmit(e)
     {
-        showLoading("input");
+        e.preventDefault();
+        setLoading("input", true);
         
         const foundUsername = users.filter(e => e.username.toLowerCase() === input.userName.toLowerCase());
+        
         const passwordCheck = input.password === input.repeatPassword;
         
         if(foundUsername.length)
         {
-            e.preventDefault();
-            setValidated({...validated, userName: false});
+            setValidation({...validation, userName: false});
         }
         else if(!passwordCheck)
         {
-            e.preventDefault();
-            setValidated({...validated, repeatPassword: false});
+            setValidation({...validation, password: false, repeatPassword: false});
         }
         else
         {
-            e.preventDefault();
+            const payload = await register(input);
             
-            try
+            if(payload?.success)
             {
-                await dispatch(register(input));
-                
                 setInput({
                     userName: "",
                     password: "",
                     repeatPassword: "",
                 });
-                setValidated(true);
+                setValidation({userName: true, password: false, repeatPassword: true, msg: payload.msg});
                 navigate("/login");
             }
-            catch(e)
+            else
             {
-                const error = e.response?.data;
-                console.log(error);
+                setValidation({userName: false, password: false, repeatPassword: false, msg: payload.msg});
             };
-            
         };
         
-        hideLoading("input");
+        setLoading("input", false);
     };
     
     
@@ -107,7 +101,7 @@ export default function Register()
                                 value={input.userName}
                                 onChange={handleChange}
                                 required
-                                isInvalid={!validated.userName}
+                                isInvalid={!validation.userName}
                             />
                             
                             <Form.Control.Feedback type="invalid">
@@ -125,7 +119,12 @@ export default function Register()
                                 value={input.password}
                                 onChange={handleChange}
                                 required
+                                isInvalid={!validation.password}
                             />
+                            
+                            <Form.Control.Feedback type="invalid">
+                                Password does not match.
+                            </Form.Control.Feedback>
                         </FloatingLabel>
                     </Form.Group>
                     
@@ -138,7 +137,7 @@ export default function Register()
                                 value={input.repeatPassword}
                                 onChange={handleChange}
                                 required
-                                isInvalid={!validated.repeatPassword}
+                                isInvalid={!validation.repeatPassword}
                             />
                             
                             <Form.Control.Feedback type="invalid">
@@ -162,7 +161,7 @@ export default function Register()
                     
                     <Button type="submit">
                         {
-                            isLoading.input ? <Loader type="input"/>
+                            isLoading("input") ? <Loader type="input"/>
                             :
                             "Register"
                         }

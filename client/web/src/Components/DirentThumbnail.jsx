@@ -3,12 +3,15 @@ import React, {useEffect, useState} from "react";
 import {Image} from "react-bootstrap";
 import * as Icons from "react-bootstrap-icons";
 // Files
-import {getThumbnail} from "../redux/actions/actions";
+import {useAppStore} from "../store/store.js";
 
 
 export default function DirentThumbnail({props, style})
 {
-    const {name, path, isDir, backDir, size} = props;
+    const {name, isDir, backDir, size} = props;
+    
+    const {getPath, getThumbnail} = useAppStore();
+    const path = getPath();
     
     const [thumbnail, setThumbnail] = useState(null);
     
@@ -21,22 +24,9 @@ export default function DirentThumbnail({props, style})
     
     async function handleThumbnail()
     {
-        try
-        {
-            const thumb = await getThumbnail(`${path}/${name}`);
-            
-            if(thumb?.type === "application/octet-stream")
-            {
-                const blob = new Blob([thumb], {type: "image/webp"});
-                const url = URL.createObjectURL(blob);
-                
-                setThumbnail(url);
-            };
-        }
-        catch(error)
-        {
-            console.error("Error fetching thumbnail:", error);
-        };
+        const thumb = await getThumbnail(`${path}/${name}`);
+        
+        setThumbnail(thumb);
     };
     
     

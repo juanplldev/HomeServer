@@ -1,19 +1,22 @@
 // Dependencies
 import React, {useEffect, useState} from "react";
-import {Modal, Button, Form, Row, Col} from "react-bootstrap";
-import {X} from "react-bootstrap-icons";
+import {Modal, Button, Form} from "react-bootstrap";
 // Files
-import {useLoading} from "../contexts/LoadingContext";
-import Loader from "./Loader";
+import {useAppStore, useLoadingStore} from "../store/store.js";
+import Loader from "./Loader.jsx";
 
 
 function CustomModal(props)
 {
+    const {type="", input=[], name, showModal, handleCloseModal, submitAction, setInput} = props;
+    
+    const {getPath, reloadContentState} = useAppStore();
+    const {isLoading, setLoading} = useLoadingStore();
+    const path = getPath();
+    
     const [validated, setValidated] = useState(true);
     const [error, setError] = useState(null);
     const [isEmpty, setIsEmpty] = useState(true);
-    const {type="", input=[], name, showModal, handleCloseModal, submitAction, setInput, reload} = props;
-    const {isLoading, showLoading, hideLoading} = useLoading();
     
     useEffect(() => {
         if(Array.isArray(input))
@@ -44,24 +47,24 @@ function CustomModal(props)
     async function handleSubmit(e)
     {
         e.preventDefault();
-        showLoading("input");
+        setLoading("input", true);
         
-        const submitError = await submitAction(e);
+        const payload = await submitAction(e);
         
-        if(submitError)
-        {
-            setValidated(false);
-            setError(submitError);
-        }
-        else
+        if(payload?.success)
         {
             setValidated(true);
             handleCloseModal();
             setInput({name: ""});
+            await reloadContentState(path);
+        }
+        else
+        {
+            setValidated(false);
+            setError(payload);
         };
         
-        hideLoading("input");
-        await reload();
+        setLoading("input", false);
     };
     
     
@@ -89,15 +92,17 @@ function CustomModal(props)
                                 />
                                 
                                 <Form.Control.Feedback type="invalid">
-                                    {error && error.msg} Code: {error && error.error.code}
+                                    {error?.msg}
+                                    <br/>
+                                    Code: {error?.error?.code ?? error?.status}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Form>
                     </Modal.Body>
                     
-                    <Button disabled={isEmpty || isLoading.input} onClick={handleSubmit}>
+                    <Button disabled={isEmpty || isLoading("input")} onClick={handleSubmit}>
                         {
-                            isLoading.input ? <Loader type="input"/>
+                            isLoading("input") ? <Loader type="input"/>
                             :
                             "Save"
                         }
@@ -119,13 +124,15 @@ function CustomModal(props)
                         <p>Are you sure you want to delete this item?</p>
                         
                         <span hidden={error ? false : true} >
-                            {error && error.msg} Code: {error && error.error.code}
+                            {error?.msg}
+                            <br/>
+                            Code: {error?.error?.code ?? error?.status}
                         </span>
                     </Modal.Body>
                     
                     <Button variant="danger" onClick={handleSubmit}>
                         {
-                            isLoading.input ? <Loader type="input"/>
+                            isLoading("input") ? <Loader type="input"/>
                             :
                             "Delete"
                         }
@@ -158,15 +165,17 @@ function CustomModal(props)
                                 />
                                 
                                 <Form.Control.Feedback type="invalid">
-                                    {error}
+                                    {error?.msg}
+                                    <br/>
+                                    Code: {error?.error?.code ?? error?.status}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Form>
                     </Modal.Body>
                     
-                    <Button disabled={isEmpty || isLoading.input} onClick={handleSubmit}>
+                    <Button disabled={isEmpty || isLoading("input")} onClick={handleSubmit}>
                         {
-                            isLoading.input ? <Loader type="input"/>
+                            isLoading("input") ? <Loader type="input"/>
                             :
                             "Create"
                         }
@@ -177,79 +186,7 @@ function CustomModal(props)
     }
     else if(type === "Upload")
     {
-        const validStyle =
-        {
-            color: "green",
-        };
-        const invalidStyle =
-        {
-            color: "red",
-        };
         
-        return (
-            <div onClick={e => e.preventDefault()}>
-                <Modal centered show={showModal} onHide={handleCloseModal} scrollable={true}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Upload files</Modal.Title>
-                    </Modal.Header>
-                    
-                    <Modal.Body className="d-flex flex-column align-items-start" style={{maxHeight: 300}}>
-                        {
-                            input.map((file, index) => {
-                                return(
-                                    <Row key={index} style={{width: "100%"}}>
-                                        <Col className="d-flex align-items-center">
-                                            <p className="p-0 m-0" style={file.success === false ? invalidStyle : file.success ? validStyle : {}}>
-                                                {file.name}
-                                            </p>
-                                            
-                                            <Button className="p-0 mx-2" variant="outline" onClick={e => {
-                                                e.preventDefault();
-                                                setInput(input.filter(e => e.name !== file.name));
-                                            }}>
-                                                <X size={25}/>
-                                            </Button>
-                                        </Col>
-                                        {
-                                            file.success === false ?
-                                            <p className="px-2 mx-1" style={file.success === false ? invalidStyle : {}}>
-                                                {file.msg}
-                                            </p>
-                                            :
-                                            null
-                                        }
-                                    </Row>
-                                );
-                            })
-                        }
-                    </Modal.Body>
-                    
-                    <Button disabled={isEmpty || isLoading.input} onClick={handleSubmit}>
-                        {
-                            isLoading.input ? <Loader type="input"/>
-                            :
-                            "Upload"
-                        }
-                    </Button>
-                </Modal>
-            </div>
-        );
-    }
-    else if(type === "AxiosError")
-    {
-        return (
-            <div onClick={e => e.preventDefault()}>
-                <Modal centered show={showModal} onHide={handleCloseModal}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Axios Error</Modal.Title>
-                    </Modal.Header>
-                    
-                    <Modal.Body className="d-flex flex-column align-items-start">
-                        {name}
-                    </Modal.Body>
-                </Modal>
-            </div>
-        );
     };
 };
 

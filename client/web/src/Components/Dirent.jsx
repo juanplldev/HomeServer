@@ -1,16 +1,14 @@
 // Dependencies
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Link} from "react-router-dom";
-import {useDispatch} from "react-redux";
 import {Card, Container, Row, Col, Button} from "react-bootstrap";
 import {Download, Pencil, Trash} from "react-bootstrap-icons";
 import {saveAs} from "file-saver";
 // Files
-import {putDir, deleteDir, getFile, putFile, deleteFile} from "../redux/actions/actions";
-import {useLoading} from "../contexts/LoadingContext";
-import CustomModal from "./CustomModal";
-import DirentThumbnail from "./DirentThumbnail";
-import Loader from "./Loader";
+import {useAppStore, useLoadingStore} from "../store/store.js";
+import CustomModal from "./CustomModal.jsx";
+import DirentThumbnail from "./DirentThumbnail.jsx";
+import Loader from "./Loader.jsx";
 const host = process.env.REACT_APP_HOST;
 
 
@@ -42,7 +40,9 @@ export default function Dirent(props)
 
 function DirentLink(props)
 {
-    const {name, path, isDir, backDir} = props;
+    const {name, isDir, backDir} = props;
+    
+    const {path} = useAppStore();
     
     if(!isDir)
     {
@@ -75,11 +75,11 @@ function DirentLink(props)
 
 function DirentCard(props)
 {
-    const {name, path, isDir, backDir, reload} = props;
+    const {name, isDir, backDir} = props;
     
-    const {isLoading, showLoading, hideLoading} = useLoading();
-    
-    const dispatch = useDispatch();
+    const {getPath, putDir, deleteDir, getFile, putFile, deleteFile} = useAppStore();
+    const {isLoading, setLoading} = useLoadingStore();
+    const path = getPath();
     
     const [input, setInput] = useState({name});
     const [showModal, setShowModal] = useState(false);
@@ -103,25 +103,22 @@ function DirentCard(props)
     async function handleDownload(e)
     {
         e.preventDefault();
-        showLoading("mouse");
+        setLoading("mouse", true);
         
         const filePath = path ? `${path}/${name}` : name;
-        const data = await dispatch(getFile(filePath)).catch(e => console.log(e));
-        const file = data.payload;
+        const payload = await getFile(filePath);
         
-        if(file)
+        if(payload)
         {
-            saveAs(file, name);
+            saveAs(payload, name);
         };
         
-        hideLoading("mouse");
+        setLoading("mouse", false);
     };
     
     async function handleEditName(e)
     {
         e.preventDefault();
-        
-        let foundError = null;
         
         if(input.name)
         {
@@ -129,80 +126,41 @@ function DirentCard(props)
             {
                 const dirPath = path ? `${path}/${name}` : name;
                 
-                try
-                {
-                    await dispatch(putDir(dirPath, input.name));
-                }
-                catch(error)
-                {
-                    foundError = error.response?.data;
-                    console.log(foundError || error);
-                };
+                return await putDir(dirPath, input.name);
             }
             else
             {
                 const filePath = path ? `${path}/${name}` : name;
                 
-                try
-                {
-                    await dispatch(putFile(filePath, input.name));
-                }
-                catch(error)
-                {
-                    foundError = error.response?.data;
-                    console.log(foundError || error);
-                };
+                return await putFile(filePath, input.name);
             };
         };
-        
-        return foundError;
     };
     
     async function handleDelete(e)
     {
         e.preventDefault();
         
-        let foundError = null;
-        
         if(isDir)
         {
-            
             const dirPath = path ? `${path}/${name}` : name;
             
-            try
-            {
-                await dispatch(deleteDir(dirPath));
-            }
-            catch(error)
-            {
-                foundError = error.response?.data;
-                console.log(foundError || error);
-            };
+            return await deleteDir(dirPath);
         }
         else
         {
             const filePath = path ? `${path}/${name}` : name;
             
-            try
-            {
-                await dispatch(deleteFile(filePath));
-            }
-            catch(error)
-            {
-                foundError = error.response?.data;
-                console.log(foundError || error);
-            };
+            return await deleteFile(filePath);
         };
-        
-        return foundError;
     };
     
     
     return (
         <Card style={{
-                    minWidth: "100%",
-                    height: "100%",
-                }}>
+            minWidth: "100%",
+            height: "100%",
+        }}>
             <Card.Body className="p-1 d-flex align-items-center justify-content-center">
                 <Container>
                     <Row className="d-flex align-items-center justify-content-between">
@@ -222,7 +180,7 @@ function DirentCard(props)
                                 :
                                 <Button className="p-0 mx-1" variant="outline" onClick={handleDownload}>
                                     {
-                                        isLoading.mouse ? <Loader type="mouse"/>
+                                        isLoading("mouse") ? <Loader type="mouse"/>
                                         :
                                         <>
                                             <Download size={20}/>
@@ -258,7 +216,6 @@ function DirentCard(props)
                             showModal={showModal}
                             handleCloseModal={handleCloseModal}
                             submitAction={modalType === "Edit" ? handleEditName : modalType === "Delete" ? handleDelete : modalType}
-                            reload={reload}
                             setInput={setInput}
                         />
                     }

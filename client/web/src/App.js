@@ -2,11 +2,11 @@
 import React from "react";
 import {Route, Routes} from "react-router-dom";
 // Files
-import PrivateRoute from "./contexts/PrivateRoute";
-import AdminRoute from "./contexts/AdminRoute";
+import PrivateRoute from "./Components/Routes/PrivateRoute.jsx";
+import AdminRoute from "./Components/Routes/AdminRoute.jsx";
 import Home from "./Components/Home.jsx";
-import Register from "./Components/Register/Register";
-import Login from "./Components/Login/Login";
+import Register from "./Components/Register/Register.jsx";
+import Login from "./Components/Login/Login.jsx";
 import "./App.css";
 
 

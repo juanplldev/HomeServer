@@ -2,12 +2,15 @@
 import React from "react";
 import {Container, Row} from "react-bootstrap";
 // Files
+import {useAppStore} from "../store/store.js";
 import Dirent from "./Dirent.jsx";
 
 
 export default function DirContent(props)
 {
-    const {directories, files, path, reload, handleShowModal, handleCloseModal, showModal, modalType} = props;
+    const {directories, files, handleShowModal, handleCloseModal, showModal, modalType} = props;
+    
+    const {path} = useAppStore();
     
     return (
         <Container className="d-flex flex-row align-items-center justify-content-start" style={{width: "100%"}}>
@@ -16,11 +19,9 @@ export default function DirContent(props)
                     path ?
                     <Dirent
                         name={""}
-                        path={path}
                         backDir={true}
                         isDir={true}
                         key={"backDir"}
-                        reload={reload}
                     />
                     :
                     null
@@ -30,11 +31,9 @@ export default function DirContent(props)
                         return (
                             <Dirent
                                 name={dir}
-                                path={path}
                                 backDir={false}
                                 isDir={true}
                                 key={dir}
-                                reload={reload}
                                 handleShowModal={handleShowModal}
                                 handleCloseModal={handleCloseModal}
                                 showModal={showModal}
@@ -48,10 +47,8 @@ export default function DirContent(props)
                         return (
                             <Dirent
                                 name={file}
-                                path={path}
                                 isDir={false}
                                 key={file}
-                                reload={reload}
                                 handleShowModal={handleShowModal}
                                 handleCloseModal={handleCloseModal}
                                 showModal={showModal}
