@@ -3,10 +3,10 @@ import React, {useEffect, useState} from "react";
 import {Image} from "react-bootstrap";
 import * as Icons from "react-bootstrap-icons";
 // Files
-import {useAppStore} from "../store/store.js";
+import {useAppStore} from "../../store/store.js";
 
 
-export default function DirentThumbnail({props, style})
+export default function Thumbnail({props, style})
 {
     const {name, isDir, backDir, size} = props;
     

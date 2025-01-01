@@ -1,8 +1,6 @@
 // Dependencies
 import React from "react";
 import {Container, Spinner} from "react-bootstrap";
-// Files
-import {useLoadingStore} from "../store/store.js";
 
 
 export default function Loader({type})

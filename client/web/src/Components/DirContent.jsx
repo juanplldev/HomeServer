@@ -3,12 +3,12 @@ import React from "react";
 import {Container, Row} from "react-bootstrap";
 // Files
 import {useAppStore} from "../store/store.js";
-import Dirent from "./Dirent.jsx";
+import Dirent from "./Dirent/Dirent.jsx";
 
 
 export default function DirContent(props)
 {
-    const {directories, files, handleShowModal, handleCloseModal, showModal, modalType} = props;
+    const {directories, files} = props;
     
     const {path} = useAppStore();
     
@@ -34,10 +34,6 @@ export default function DirContent(props)
                                 backDir={false}
                                 isDir={true}
                                 key={dir}
-                                handleShowModal={handleShowModal}
-                                handleCloseModal={handleCloseModal}
-                                showModal={showModal}
-                                modalType={modalType}
                             />
                         );
                     })
@@ -49,10 +45,6 @@ export default function DirContent(props)
                                 name={file}
                                 isDir={false}
                                 key={file}
-                                handleShowModal={handleShowModal}
-                                handleCloseModal={handleCloseModal}
-                                showModal={showModal}
-                                modalType={modalType}
                             />
                         );
                     })

@@ -48,7 +48,7 @@ export default function Home()
                 <Col>
                     <PathBar/>
                 </Col>
-                {/* <MenuList/> */}
+                <MenuList/>
             </Row>
             
             <Row {...rowProps} style={{height: 200, width: "100%"}}>

@@ -1,103 +1,49 @@
 // Dependencies
 import React, {useState} from "react";
-import {Link} from "react-router-dom";
 import {Card, Container, Row, Col, Button} from "react-bootstrap";
 import {Download, Pencil, Trash} from "react-bootstrap-icons";
 import {saveAs} from "file-saver";
 // Files
-import {useAppStore, useLoadingStore} from "../store/store.js";
-import CustomModal from "./CustomModal.jsx";
-import DirentThumbnail from "./DirentThumbnail.jsx";
-import Loader from "./Loader.jsx";
-const host = process.env.REACT_APP_HOST;
+import {useAppStore, useLoadingStore} from "../../store/store.js";
+import Thumbnail from "./Thumbnail.jsx";
+import Edit from "../Modal/Edit.jsx";
+import Delete from "../Modal/Delete.jsx";
+import Loader from "../Loader.jsx";
 
 
-export default function Dirent(props)
-{
-    const [actualWidth, setActualWidth] = useState(window.innerWidth);
-    let dynamicWidth = actualWidth >= 768 ? 250 : "100%";
-    
-    function handleResize()
-    {
-        setActualWidth(window.innerWidth);
-        window.removeEventListener("resize", handleResize);
-    };
-    
-    window.addEventListener("resize", handleResize);
-    
-    return (
-        <Col className="p-1" style={{
-                minWidth: dynamicWidth,
-                height: 70,
-            }}>
-            <DirentLink {...props}>
-                <DirentCard {...props} dynamicWidth={dynamicWidth}/>
-            </DirentLink>
-        </Col>
-    );
-};
-
-
-function DirentLink(props)
+export default function DirentCard(props)
 {
     const {name, isDir, backDir} = props;
     
-    const {path} = useAppStore();
-    
-    if(!isDir)
-    {
-        return props.children;
-    }
-    else
-    {
-        let link = new URL(path ? `${path}/${name}` : name, host);
-        
-        if(backDir)
-        {
-            if(path.split("/").length >= 2)
-            {
-                link = new URL(path.split("/").slice(0, -1).join("/") || "/", host);
-            }
-            else
-            {
-                link = new URL(path.split("/").slice(0, -2).join("/") || "/", host);
-            }
-        };
-        
-        return (
-            <Link to={link.pathname} style={{color: "black", textDecoration: "none"}}>
-                {props.children}
-            </Link>
-        );
-    };
-};
-
-
-function DirentCard(props)
-{
-    const {name, isDir, backDir} = props;
-    
-    const {getPath, putDir, deleteDir, getFile, putFile, deleteFile} = useAppStore();
+    const {getPath, putDir, deleteDir, getFile, putFile, deleteFile, reloadContentState} = useAppStore();
     const {isLoading, setLoading} = useLoadingStore();
     const path = getPath();
     
     const [input, setInput] = useState({name});
-    const [showModal, setShowModal] = useState(false);
-    const [modalType, setModalType] = useState(null);
+    const [validated, setValidated] = useState(true);
+    const [error, setError] = useState(null);
+    const [modal, setModal] = useState({
+        show: false,
+        type: "",
+    });
     
     const thumbnailSize = 25;
     
     function handleShowModal(e, type)
     {
         e.preventDefault();
-        setShowModal(true);
-        setModalType(type);
+        setModal({
+            show: true,
+            type,
+        });
     };
     
     function handleCloseModal()
     {
-        setShowModal(false);
-        setModalType(null);
+        setModal({
+            show: false,
+            type: "",
+        });
     };
     
     async function handleDownload(e)
@@ -119,6 +65,7 @@ function DirentCard(props)
     async function handleEditName(e)
     {
         e.preventDefault();
+        setLoading("input", true);
         
         if(input.name)
         {
@@ -126,33 +73,81 @@ function DirentCard(props)
             {
                 const dirPath = path ? `${path}/${name}` : name;
                 
-                return await putDir(dirPath, input.name);
+                const payload = await putDir(dirPath, input.name);
+                
+                if(payload?.success)
+                {
+                    setValidated(true);
+                    setInput({name: ""});
+                    handleCloseModal();
+                    await reloadContentState(path);
+                };
+                setValidated(false);
+                setError(payload ?? null);
             }
             else
             {
                 const filePath = path ? `${path}/${name}` : name;
                 
-                return await putFile(filePath, input.name);
+                const payload = await putFile(filePath, input.name);
+                
+                if(payload?.success)
+                {
+                    setValidated(true);
+                    setInput({name: ""});
+                    handleCloseModal();
+                    await reloadContentState(path);
+                };
+                setValidated(false);
+                setError(payload ?? null);
             };
         };
+        
+        setLoading("input", false);
     };
     
     async function handleDelete(e)
     {
         e.preventDefault();
+        setLoading("input", true);
         
-        if(isDir)
+        if(input.name)
         {
-            const dirPath = path ? `${path}/${name}` : name;
-            
-            return await deleteDir(dirPath);
-        }
-        else
-        {
-            const filePath = path ? `${path}/${name}` : name;
-            
-            return await deleteFile(filePath);
+            if(isDir)
+            {
+                const dirPath = path ? `${path}/${name}` : name;
+                
+                const payload = await deleteDir(dirPath, input.name);
+                
+                if(payload?.success)
+                {
+                    setValidated(true);
+                    setInput({name: ""});
+                    handleCloseModal();
+                    await reloadContentState(path);
+                };
+                setValidated(false);
+                setError(payload ?? null);
+            }
+            else
+            {
+                const filePath = path ? `${path}/${name}` : name;
+                
+                const payload = await deleteFile(filePath, input.name);
+                
+                if(payload?.success)
+                {
+                    setValidated(true);
+                    setInput({name: ""});
+                    handleCloseModal();
+                    await reloadContentState(path);
+                };
+                setValidated(false);
+                setError(payload ?? null);
+            };
         };
+        
+        setLoading("input", false);
     };
     
     
@@ -170,7 +165,7 @@ function DirentCard(props)
                                 overflow: "hidden",
                                 whiteSpace: "nowrap",
                             }}>
-                                <DirentThumbnail props={{name, path, isDir, backDir, size: thumbnailSize}} style={{margin: 2}}/> {name}
+                                <Thumbnail props={{name, path, isDir, backDir, size: thumbnailSize}} style={{margin: 2}}/> {name}
                             </Card.Text>
                         </Col>
                         
@@ -189,7 +184,6 @@ function DirentCard(props)
                                     }
                                 </Button>
                             }
-                            
                             {
                                 backDir ? null
                                 :
@@ -197,7 +191,6 @@ function DirentCard(props)
                                     <Pencil size={20}/>
                                 </Button>
                             }
-                            
                             {
                                 backDir ? null
                                 :
@@ -209,14 +202,29 @@ function DirentCard(props)
                     </Row>
                     
                     {
-                        <CustomModal
-                            type={modalType}
+                        modal.type === "Edit"
+                        &&
+                        <Edit
+                            modal={modal}
                             input={input}
-                            name={name}
-                            showModal={showModal}
-                            handleCloseModal={handleCloseModal}
-                            submitAction={modalType === "Edit" ? handleEditName : modalType === "Delete" ? handleDelete : modalType}
+                            validated={validated}
+                            error={error}
                             setInput={setInput}
+                            setValidated={setValidated}
+                            handleCloseModal={handleCloseModal}
+                            handleSubmit={handleEditName}
+                        />
+                    }
+                    {
+                        modal.type === "Delete"
+                        &&
+                        <Delete
+                            modal={modal}
+                            name={name}
+                            validated={validated}
+                            error={error}
+                            handleCloseModal={handleCloseModal}
+                            handleSubmit={handleDelete}
                         />
                     }
                 </Container>

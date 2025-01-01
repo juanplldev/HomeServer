@@ -116,15 +116,15 @@ export const useAuthStore = create(set => ({
     },
     login: async (values) => {
         const payload = await api.login(values);
-        const content = payload?.content;
+        const data = payload?.data;
         
-        if(content)
+        if(data)
         {
             const userData =
             {
-                token: content?.token,
-                userId: content?.userId,
-                isAdmin: content?.isAdmin,
+                token: data?.token,
+                userId: data?.userId,
+                isAdmin: data?.isAdmin,
             };
             
             setUserData(userData);
