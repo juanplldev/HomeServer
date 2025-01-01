@@ -105,7 +105,7 @@ async function isAdmin(req, res, next)
         {
             const foundUser = await getUser(userId);
             
-            if(foundUser.dataValues?.isAdmin)
+            if(foundUser.data?.dataValues?.isAdmin)
             {
                 return next();
             }
