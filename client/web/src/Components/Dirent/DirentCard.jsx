@@ -44,6 +44,8 @@ export default function DirentCard(props)
             show: false,
             type: "",
         });
+        setValidated(true);
+        setError(null);
     };
     
     async function handleDownload(e)

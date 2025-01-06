@@ -8,7 +8,7 @@ import PathBar from "./PathBar.jsx";
 import UploadFile from "./UploadFile.jsx";
 import CreateDir from "./CreateDir.jsx";
 import DirContent from "./DirContent.jsx";
-import MenuList from "./MenuList.jsx";
+import BurgerMenu from "./BurgerMenu.jsx";
 import Loader from "./Loader.jsx";
 
 
@@ -48,7 +48,7 @@ export default function Home()
                 <Col>
                     <PathBar/>
                 </Col>
-                <MenuList/>
+                <BurgerMenu/>
             </Row>
             
             <Row {...rowProps} style={{height: 200, width: "100%"}}>

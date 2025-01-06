@@ -28,7 +28,7 @@ export default function Delete(props)
             <Modal.Body>
                 <p>Are you sure you want to delete this item?</p>
                 
-                <span hidden={error ? false : true}>
+                <span hidden={error ? false : true} style={{color: "red"}}>
                     {
                         error?.msg
                     }

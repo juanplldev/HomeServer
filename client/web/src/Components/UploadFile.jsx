@@ -47,7 +47,7 @@ export default function UploadFile()
                 }
                 else
                 {
-                    setFiles("rejectedFiles", {name: file.name, msg: payload.msg});
+                    setFiles("rejectedFiles", {name: file.name, msg: payload?.msg});
                 };
             };
             
