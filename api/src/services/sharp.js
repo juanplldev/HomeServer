@@ -9,7 +9,7 @@ async function generateImageThumbnail(inputPath, outputPath)
     
     try
     {
-        return await sharp(inputPath).resize(200, 200).toFormat(sharp.format.webp).toFile(outputPath);
+        return await sharp(inputPath).rotate().resize(200, 200).toFormat(sharp.format.webp).toFile(outputPath);
     }
     catch(error)
     {
