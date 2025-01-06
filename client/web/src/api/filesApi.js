@@ -96,6 +96,8 @@ export async function getFile(path)
 
 export async function postFile(path, file)
 {
+    const controller = new AbortController();
+    
     try
     {
         const {userId} = useAuthStore.getState();
@@ -111,6 +113,7 @@ export async function postFile(path, file)
                 
                 setUploadProgress(file, percentCompleted);
             },
+            signal: controller.signal,
         });
         
         return response.data;
