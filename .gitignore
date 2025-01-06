@@ -19,3 +19,8 @@ eslint.config.mjs
 
 # Production
 build
+dist
+
+# VSCode
+.vscode/*
+!.vscode/extensions.json
