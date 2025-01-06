@@ -1,5 +1,5 @@
 // Dependencies
-import React, {useState} from "react";
+import {useState} from "react";
 import {Card, Container, Row, Col, Button} from "react-bootstrap";
 import {Download, Pencil, Trash} from "react-bootstrap-icons";
 import {saveAs} from "file-saver";

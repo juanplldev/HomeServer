@@ -1,5 +1,4 @@
 // Dependencies
-import React from "react";
 import {useNavigate} from "react-router-dom";
 import {Container, Breadcrumb} from "react-bootstrap";
 // Files

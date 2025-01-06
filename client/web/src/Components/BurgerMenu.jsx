@@ -1,5 +1,5 @@
 // Dependencies
-import React, {useState} from "react";
+import {useState} from "react";
 import {Col, Dropdown} from "react-bootstrap";
 import {ArrowRepeat, BoxArrowRight} from "react-bootstrap-icons";
 // Files

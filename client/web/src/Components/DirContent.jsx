@@ -1,5 +1,4 @@
 // Dependencies
-import React from "react";
 import {Container, Row} from "react-bootstrap";
 // Files
 import {useAppStore} from "../store/store.js";

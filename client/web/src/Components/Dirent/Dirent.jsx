@@ -1,5 +1,5 @@
 // Dependencies
-import React, {useState} from "react";
+import {useState} from "react";
 import {Col} from "react-bootstrap";
 // Files
 import DirentLink from "./DirentLink.jsx";
@@ -9,7 +9,7 @@ import DirentCard from "./DirentCard.jsx";
 export default function Dirent(props)
 {
     const [actualWidth, setActualWidth] = useState(window.innerWidth);
-    let dynamicWidth = actualWidth >= 768 ? 250 : "100%";
+    const dynamicWidth = actualWidth >= 768 ? 250 : "100%";
     
     function handleResize()
     {

@@ -1,5 +1,4 @@
 // Dependencies
-import React from "react";
 import {Modal, Button, Form} from "react-bootstrap";
 // Files
 import {useLoadingStore} from "../../store/store.js";

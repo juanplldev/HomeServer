@@ -1,9 +1,8 @@
 // Dependencies
-import React from "react";
 import {Link} from "react-router-dom";
 // Files
 import {useAppStore} from "../../store/store.js";
-const host = process.env.REACT_APP_HOST;
+const host = import.meta.env.VITE_HOST;
 
 
 export default function DirentLink(props)

@@ -2,11 +2,11 @@
 import axios from "axios";
 // Files
 import {useAuthStore} from "../store/store.js";
-const {REACT_APP_API, REACT_APP_API_KEY} = process.env;
+const {VITE_API, VITE_API_KEY} = import.meta.env;
 
 
 const authApi = axios.create({
-    baseURL: REACT_APP_API,
+    baseURL: VITE_API,
 });
 
 authApi.interceptors.request.use(config => {
@@ -14,7 +14,7 @@ authApi.interceptors.request.use(config => {
     
     config.headers = {
         Authorization: `Bearer ${token}`,
-        "x-api-key": REACT_APP_API_KEY,
+        "x-api-key": VITE_API_KEY,
     };
     
     return config;

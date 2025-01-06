@@ -1,5 +1,4 @@
 // Dependencies
-import React from "react";
 import {Modal, Row, Col, Button, ProgressBar} from "react-bootstrap";
 import {X} from "react-bootstrap-icons";
 // Files

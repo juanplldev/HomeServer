@@ -1,5 +1,4 @@
 // Dependencies
-import React from "react";
 import {Navigate} from "react-router-dom";
 // Files
 import {useAuthStore} from "../../store/store.js";

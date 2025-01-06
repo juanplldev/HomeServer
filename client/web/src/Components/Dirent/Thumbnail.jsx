@@ -1,5 +1,5 @@
 // Dependencies
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Image} from "react-bootstrap";
 import * as Icons from "react-bootstrap-icons";
 // Files
