@@ -1,5 +1,4 @@
 // Dependencies
-require("dotenv").config();
 const path = require("node:path");
 // Files
 const {getUser} = require("../controllers/userController");

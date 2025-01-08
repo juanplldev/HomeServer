@@ -1,5 +1,4 @@
 // Dependencies
-require("dotenv").config();
 const fs = require("node:fs");
 // Files
 const api_response = require("../services/api_response");
