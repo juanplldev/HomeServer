@@ -8,13 +8,13 @@ const {isAdmin} = require("../middlewares/localAuth");
 
 
 router.post("/register", isAdmin, async (req, res) => {
-    const {userName, password, filesPath} = req.body;
+    const {username, password, filesPath} = req.body;
     
     try
     {
-        if(userName && password && filesPath)
+        if(username && password && filesPath)
         {
-            const response = await postUser({userName, password, filesPath});
+            const response = await postUser({username, password, filesPath});
             return res.status(response.status).send(response);
         }
         else

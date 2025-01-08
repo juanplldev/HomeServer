@@ -10,7 +10,7 @@ async function authenticateUser(content)
     const token = await signToken(
         {
             id: content.id,
-            userName: content.userName,
+            username: content.username,
             isAdmin: content.isAdmin,
             avatar: content.avatar,
             filesPath: content.filesPath,
@@ -37,7 +37,7 @@ async function isAuthenticated(req, res, next)
             
             if(response.success)
             {
-                const userData = {id, userName, filesPath} = response.data.dataValues;
+                const userData = {id, username, filesPath} = response.data.dataValues;
                 
                 req.userData = userData;
                 

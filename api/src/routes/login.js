@@ -10,25 +10,25 @@ const {getModelByParam} = require("../database/dbMethods");
 
 
 router.post("/login", async (req, res) => {
-    const {userName, password} = req.body;
+    const {username, password} = req.body;
     
     try
     {
-        if(userName && password)
+        if(username && password)
         {
-            const splittedUserName = userName.trim().split(" ");
-            let modifiedUserName = userName;
+            const splittedUsername = username.trim().split(" ");
+            let modifiedUsername = username;
             
-            if(splittedUserName.length === 1)
+            if(splittedUsername.length === 1)
             {
-                modifiedUserName = userName.charAt(0).toUpperCase() + String(userName).slice(1);
+                modifiedUsername = username.charAt(0).toUpperCase() + String(username).slice(1);
             }
             else
             {
-                modifiedUserName = splittedUserName[0].at(0).toUpperCase() + splittedUserName[0].slice(1) + " " + splittedUserName[1].at(0).toUpperCase() + splittedUserName[1].slice(1);
+                modifiedUsername = splittedUsername[0].at(0).toUpperCase() + splittedUsername[0].slice(1) + " " + splittedUsername[1].at(0).toUpperCase() + splittedUsername[1].slice(1);
             };
             
-            const foundUser = await getModelByParam(User, "username", modifiedUserName, "one");
+            const foundUser = await getModelByParam(User, "username", modifiedUsername, "one");
             
             if(!foundUser.error)
             {

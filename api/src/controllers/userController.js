@@ -29,33 +29,33 @@ async function getUser(id)
     };
 };
 
-async function postUser({userName, password, filesPath})
+async function postUser({username, password, filesPath})
 {
-    const splittedUserName = userName.trim().split(" ");
-    let modifiedUserName = userName;
+    const splittedUsername = username.trim().split(" ");
+    let modifiedUsername = username;
     
-    if(splittedUserName.length === 1)
+    if(splittedUsername.length === 1)
     {
-        modifiedUserName = userName.charAt(0).toUpperCase() + String(userName).slice(1);
+        modifiedUsername = username.charAt(0).toUpperCase() + String(username).slice(1);
     }
     else
     {
-        modifiedUserName = splittedUserName[0].at(0).toUpperCase() + splittedUserName[0].slice(1) + " " + splittedUserName[1].at(0).toUpperCase() + splittedUserName[1].slice(1);
+        modifiedUsername = splittedUsername[0].at(0).toUpperCase() + splittedUsername[0].slice(1) + " " + splittedUsername[1].at(0).toUpperCase() + splittedUsername[1].slice(1);
     };
     
     try
     {
-        const foundUser = await getModelByParam(User, "username", modifiedUserName, "one");
+        const foundUser = await getModelByParam(User, "username", modifiedUsername, "one");
         
-        if(foundUser.error) return api_response.error("Error creating user: " + userName, "Username not available.");
+        if(foundUser.error) return api_response.error("Error creating user: " + username, "Username not available.");
         
         const hashedPassword = await hashPassword(password);
         const content =
         {
-            username: modifiedUserName,
+            username: modifiedUsername,
             password: hashedPassword,
             isAdmin: false,
-            avatar: userName,
+            avatar: username,
             filesPath,
         };
         
@@ -65,37 +65,37 @@ async function postUser({userName, password, filesPath})
     }
     catch(error)
     {
-        console.error(api_response.error("Error creating user: " + userName, error));
-        return api_response.error("Error creating user: " + userName, error);
+        console.error(api_response.error("Error creating user: " + username, error));
+        return api_response.error("Error creating user: " + username, error);
     };
 };
 
-async function putUser(id, {userName, password, filesPath, pathsToBackup})
+async function putUser(id, {username, password, filesPath, pathsToBackup})
 {
-    const splittedUserName = userName.trim().split(" ");
-    let modifiedUserName = userName;
+    const splittedUsername = username.trim().split(" ");
+    let modifiedUsername = username;
     
-    if(splittedUserName.length === 1)
+    if(splittedUsername.length === 1)
     {
-        modifiedUserName = userName.charAt(0).toUpperCase() + String(userName).slice(1);
+        modifiedUsername = username.charAt(0).toUpperCase() + String(username).slice(1);
     }
     else
     {
-        modifiedUserName = splittedUserName[0].at(0).toUpperCase() + splittedUserName[0].slice(1) + " " + splittedUserName[1].at(0).toUpperCase() + splittedUserName[1].slice(1);
+        modifiedUsername = splittedUsername[0].at(0).toUpperCase() + splittedUsername[0].slice(1) + " " + splittedUsername[1].at(0).toUpperCase() + splittedUsername[1].slice(1);
     };
     
     try
     {
-        const foundUser = await getModelByParam(User, "username", modifiedUserName, "one");
+        const foundUser = await getModelByParam(User, "username", modifiedUsername, "one");
         
         if(foundUser.error || foundUser.model.dataValues?.id !== id) return api_response.error("Error updating user: " + id, "Username already in use.");
         
         const hashedPassword = await hashPassword(password);
         const content =
         {
-            username: modifiedUserName,
+            username: modifiedUsername,
             password: hashedPassword,
-            avatar: userName,
+            avatar: username,
             filesPath,
             pathsToBackup,
         };
@@ -106,8 +106,8 @@ async function putUser(id, {userName, password, filesPath, pathsToBackup})
     }
     catch(error)
     {
-        console.error(api_response.error("Error updating user: " + userName, error));
-        return api_response.error("Error updating user: " + userName, error);
+        console.error(api_response.error("Error updating user: " + username, error));
+        return api_response.error("Error updating user: " + username, error);
     };
 };
 

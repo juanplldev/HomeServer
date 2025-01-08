@@ -27,9 +27,9 @@ router.put("/user/:userId", isAuthenticated, isOwner, async (req, res) => {
     try
     {
         const {userId} = req.params;
-        const content = {userName, password, filesPath, pathsToBackup} = req.body;
+        const content = {username, password, filesPath, pathsToBackup} = req.body;
         
-        if(content.userName && content.password)
+        if(content.username && content.password)
         {
             const response = await putUser(userId, content);
             return res.status(response.status).send(response);
