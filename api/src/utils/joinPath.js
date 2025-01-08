@@ -49,6 +49,8 @@ async function joinThumbnailPath(userId, filePath, fileName)
     if(fileName) thumbnailName = thumbnailName + "_" + path.parse(fileName).name + ".webp";
     else thumbnailName = path.parse(thumbnailName).name + ".webp";
     
+    if(thumbnailName.startsWith("rootDir_")) thumbnailName = thumbnailName.replace("rootDir_", "");
+    
     const thumbnailsDir = path.join(rootPath, ".thumbnails");
     const thumbnailPath = path.join(thumbnailsDir, thumbnailName);
     
