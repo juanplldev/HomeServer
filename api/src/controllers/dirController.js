@@ -23,16 +23,11 @@ async function getDir(userId, dirName)
         
         for await (const dirent of dir)
         {
-            if(!dirent.name.startsWith("."))
+            if(!dirent.name.startsWith(".") && !excludedDirents.includes(dirent.name))
             {
-                if(dirent.isDirectory() && !excludedDirents.includes(dirent.name))
-                {
-                    dirContent.directories.push(dirent.name);
-                }
-                else if(dirent.isFile())
-                {
-                    dirContent.files.push(dirent.name);
-                };
+                if(dirent.isDirectory()) dirContent.directories.push(dirent.name);
+                
+                if(dirent.isFile()) dirContent.files.push(dirent.name);
             };
         };
         

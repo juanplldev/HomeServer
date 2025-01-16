@@ -47,7 +47,7 @@ async function postUser({username, password, filesPath})
     {
         const foundUser = await getModelByParam(User, "username", modifiedUsername, "one");
         
-        if(foundUser.error) return api_response.error("Error creating user: " + username, "Username not available.");
+        if(foundUser.model) return api_response.error("Error creating user: " + username, "Username not available.");
         
         const hashedPassword = await hashPassword(password);
         const content =
