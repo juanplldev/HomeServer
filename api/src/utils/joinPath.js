@@ -1,4 +1,5 @@
 // Dependencies
+const fs = require("node:fs");
 const path = require("node:path");
 // Files
 const {getUser} = require("../controllers/userController");
@@ -7,18 +8,16 @@ const {getUser} = require("../controllers/userController");
 async function getUserRootPath(id)
 {
     const response = await getUser(id);
-    return response.data?.dataValues?.filesPath;
+    const filesPath = response.data?.dataValues?.filesPath;
+    
+    if(fs.existsSync(filesPath)) return filesPath;
+    
+    console.error("User root files path not defined.", "Set files path on User database.", id);
 }
 
 async function joinRootPath(userId, dir, dirName="", fileExt="")
 {
     const rootPath = await getUserRootPath(userId);
-    
-    if(!rootPath)
-    {
-        console.error("User root files path not defined.", "Set files path on User database.", userId);
-        process.exit(1);
-    };
     
     if(!dir)
     {
@@ -46,8 +45,8 @@ async function joinThumbnailPath(userId, filePath, fileName)
     
     let thumbnailName = filePath.split("/").join("_");
     
-    if(fileName) thumbnailName = thumbnailName + "_" + path.parse(fileName).name + ".webp";
-    else thumbnailName = path.parse(thumbnailName).name + ".webp";
+    if(fileName) thumbnailName = `${thumbnailName}_${path.parse(fileName).name}.webp`;
+    else thumbnailName = `${path.parse(thumbnailName).name}.webp`;
     
     if(thumbnailName.startsWith("rootDir_")) thumbnailName = thumbnailName.replace("rootDir_", "");
     

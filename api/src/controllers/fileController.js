@@ -25,12 +25,12 @@ async function getFile(userId, filePath)
             return api_response.success("File read successfully.", fileInfo);
         };
         
-        return api_response.notFoundError("Error getting file: " + filePath);
+        return api_response.notFoundError(`Error getting file: ${filePath}`);
     }
     catch(error)
     {
-        console.error(api_response.error("Error getting file: " + filePath, error));
-        return api_response.error("Error getting file: " + filePath, error);
+        console.error(api_response.internalServerError(`Error getting file: ${filePath}`, error));
+        return api_response.internalServerError(`Error getting file: ${filePath}`, error);
     };
 };
 
@@ -86,8 +86,8 @@ async function postFile(userId, filePath, file)
             }
             catch(error)
             {
-                console.error(api_response.error("Error uploading file: " + name, error));
-                return api_response.error("Error uploading file: " + name, error);
+                console.error(api_response.internalServerError(`Error uploading file: ${  name}`, error));
+                return api_response.internalServerError(`Error uploading file: ${  name}`, error);
             };
         };
     };
@@ -130,8 +130,8 @@ async function putFile(userId, filePath, fileName)
         }
         catch(error)
         {
-            console.error(api_response.error("Error updating file: " + fileName, error));
-            return api_response.error("Error updating file: " + fileName, error);
+            console.error(api_response.internalServerError(`Error updating file: ${  fileName}`, error));
+            return api_response.internalServerError(`Error updating file: ${  fileName}`, error);
         };
     };
     
@@ -158,8 +158,8 @@ async function deleteFile(userId, filePath)
     }
     catch(error)
     {
-        console.error(api_response.error("Error deleting file: " + filePath, error));
-        return api_response.error("Error deleting file: " + filePath, error);
+        console.error(api_response.internalServerError(`Error deleting file: ${filePath}`, error));
+        return api_response.internalServerError(`Error deleting file: ${filePath}`, error);
     };
 };
 

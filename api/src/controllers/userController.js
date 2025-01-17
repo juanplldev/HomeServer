@@ -16,16 +16,16 @@ async function getUser(id)
         
         if(userInfo.error)
         {
-            console.error(api_response.error("Error getting user: " + id, userInfo.error));
-            return api_response.error("Error getting user: " + id, userInfo.error);
+            console.error(api_response.error(`Error getting user: ${id}`, userInfo.error));
+            return api_response.error(`Error getting user: ${id}`, userInfo.error);
         };
         
         return api_response.success("User read successfully.", userInfo.model);
     }
     catch(error)
     {
-        console.error(api_response.error("Error getting user: " + id, error));
-        return api_response.error("Error getting user: " + id, error);
+        console.error(api_response.internalServerError(`Error getting user: ${id}`, error));
+        return api_response.internalServerError(`Error getting user: ${id}`, error);
     };
 };
 
@@ -40,14 +40,14 @@ async function postUser({username, password, filesPath})
     }
     else
     {
-        modifiedUsername = splittedUsername[0].at(0).toUpperCase() + splittedUsername[0].slice(1) + " " + splittedUsername[1].at(0).toUpperCase() + splittedUsername[1].slice(1);
+        modifiedUsername = `${splittedUsername[0].at(0).toUpperCase() + splittedUsername[0].slice(1)} ${splittedUsername[1].at(0).toUpperCase()}${splittedUsername[1].slice(1)}`;
     };
     
     try
     {
         const foundUser = await getModelByParam(User, "username", modifiedUsername, "one");
         
-        if(foundUser.model) return api_response.error("Error creating user: " + username, "Username not available.");
+        if(foundUser.model) return api_response.error(`Error creating user: ${username}`, "Username not available.");
         
         const hashedPassword = await hashPassword(password);
         const content =
@@ -65,8 +65,8 @@ async function postUser({username, password, filesPath})
     }
     catch(error)
     {
-        console.error(api_response.error("Error creating user: " + username, error));
-        return api_response.error("Error creating user: " + username, error);
+        console.error(api_response.internalServerError(`Error creating user: ${username}`, error));
+        return api_response.internalServerError(`Error creating user: ${username}`, error);
     };
 };
 
@@ -81,14 +81,14 @@ async function putUser(id, {username, password, filesPath, pathsToBackup})
     }
     else
     {
-        modifiedUsername = splittedUsername[0].at(0).toUpperCase() + splittedUsername[0].slice(1) + " " + splittedUsername[1].at(0).toUpperCase() + splittedUsername[1].slice(1);
+        modifiedUsername = `${splittedUsername[0].at(0).toUpperCase() + splittedUsername[0].slice(1)} ${splittedUsername[1].at(0).toUpperCase()}${splittedUsername[1].slice(1)}`;
     };
     
     try
     {
         const foundUser = await getModelByParam(User, "username", modifiedUsername, "one");
         
-        if(foundUser.error || foundUser.model.dataValues?.id !== id) return api_response.error("Error updating user: " + id, "Username already in use.");
+        if(foundUser.error || foundUser.model.dataValues?.id !== id) return api_response.error(`Error updating user: ${id}`, "Username already in use.");
         
         const hashedPassword = await hashPassword(password);
         const content =
@@ -106,8 +106,8 @@ async function putUser(id, {username, password, filesPath, pathsToBackup})
     }
     catch(error)
     {
-        console.error(api_response.error("Error updating user: " + username, error));
-        return api_response.error("Error updating user: " + username, error);
+        console.error(api_response.internalServerError(`Error updating user: ${username}`, error));
+        return api_response.internalServerError(`Error updating user: ${username}`, error);
     };
 };
 
@@ -117,7 +117,7 @@ async function deleteUser(id)
     {
         const foundUser = await getModelById(User, id);
         
-        if(foundUser.error) return api_response.error("Error deleting user: " + id, "User not found.");
+        if(foundUser.error) return api_response.error(`Error deleting user: ${id}`, "User not found.");
         
         await deleteModel(User, id);
         
@@ -125,8 +125,8 @@ async function deleteUser(id)
     }
     catch(error)
     {
-        console.error(api_response.error("Error deleting user: " + id, error));
-        return api_response.error("Error deleting user: " + id, error);
+        console.error(api_response.internalServerError(`Error deleting user: ${id}`, error));
+        return api_response.internalServerError(`Error deleting user: ${id}`, error);
     };
 };
 

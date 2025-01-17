@@ -31,12 +31,12 @@ async function getThumbnail(userId, filePath)
         }
         catch(error)
         {
-            console.error(api_response.error("Error getting thumbnail: " + thumbnailPath, error));
-            return api_response.error("Error getting thumbnail: " + thumbnailPath, error);
+            console.error(api_response.internalServerError(`Error getting thumbnail: ${thumbnailPath}`, error));
+            return api_response.internalServerError(`Error getting thumbnail: ${thumbnailPath}`, error);
         };
     };
     
-    return api_response.notFoundError("Error getting thumbnail: " + thumbnailPath);
+    return api_response.notFoundError(`Error getting thumbnail: ${thumbnailPath}`);
 };
 
 async function postThumbnail({userId, filePath, fileName, inputPath})
@@ -66,8 +66,8 @@ async function postThumbnail({userId, filePath, fileName, inputPath})
     }
     catch(error)
     {
-        console.error(api_response.error("Error creating thumbnail: " + thumbnailPath, error));
-        return api_response.error("Error creating thumbnail: " + thumbnailPath, error);
+        console.error(api_response.internalServerError(`Error creating thumbnail: ${thumbnailPath}`, error));
+        return api_response.internalServerError(`Error creating thumbnail: ${thumbnailPath}`, error);
     };
 };
 
@@ -93,8 +93,8 @@ async function putThumbnail({userId, filePath, fileName, inputPath, modPath})
     }
     catch(error)
     {
-        console.error(api_response.error("Error updating thumbnail: " + oldThumbnailPath, error));
-        return api_response.error("Error updating thumbnail: " + oldThumbnailPath, error);
+        console.error(api_response.internalServerError(`Error updating thumbnail: ${oldThumbnailPath}`, error));
+        return api_response.internalServerError(`Error updating thumbnail: ${oldThumbnailPath}`, error);
     };
 };
 
@@ -112,8 +112,8 @@ async function deleteThumbnail({userId, filePath})
     }
     catch(error)
     {
-        console.error(api_response.error("Error deleting thumbnail: " + thumbnailPath, error));
-        return api_response.error("Error deleting thumbnail: " + thumbnailPath, error);
+        console.error(api_response.internalServerError(`Error deleting thumbnail: ${thumbnailPath}`, error));
+        return api_response.internalServerError(`Error deleting thumbnail: ${thumbnailPath}`, error);
     };
 };
 

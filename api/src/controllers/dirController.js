@@ -44,8 +44,8 @@ async function getDir(userId, dirName)
     }
     catch(error)
     {
-        console.error(api_response.error("Error getting directory: /" + dirName, error));
-        return api_response.error("Error getting directory: /" + dirName, error);
+        console.error(api_response.internalServerError(`Error getting directory: /${dirName}`, error));
+        return api_response.internalServerError(`Error getting directory: /${dirName}`, error);
     };
 };
 
@@ -63,8 +63,8 @@ async function postDir(userId, dirPath)
         }
         catch(error)
         {
-            console.error(api_response.error("Error creating directory: /" + dirPath, error));
-            return api_response.error("Error creating directory: /" + dirPath, error);
+            console.error(api_response.internalServerError(`Error creating directory: /${dirPath}`, error));
+            return api_response.internalServerError(`Error creating directory: /${dirPath}`, error);
         };
     };
     
@@ -87,8 +87,8 @@ async function putDir(userId, dirPath, dirName)
         }
         catch(error)
         {
-            console.error(api_response.error("Error updating directory: /" + dirName, error));
-            return api_response.error("Error updating directory: /" + dirName, error);
+            console.error(api_response.internalServerError(`Error updating directory: /${dirName}`, error));
+            return api_response.internalServerError(`Error updating directory: /${dirName}`, error);
         };
     };
     
@@ -107,8 +107,8 @@ async function deleteDir(userId, dirPath)
     }
     catch(error)
     {
-        console.error(api_response.error("Error deleting directory: /" + dirPath, error));
-        return api_response.error("Error deleting directory: /" + dirPath, error);
+        console.error(api_response.internalServerError(`Error deleting directory: /${dirPath}`, error));
+        return api_response.internalServerError(`Error deleting directory: /${dirPath}`, error);
     };
 };
 
